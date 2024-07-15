@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-
+from src.auth.views import router as auth_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,11 +13,11 @@ async def lifespan(app: FastAPI):
     print("App is shutting down...")
 
 
-app = FastAPI(lifespan=lifespan, title="Spimex App")
+app = FastAPI(lifespan=lifespan, title="BCS_APP")
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+
+app.include_router(auth_router)
+
 
 origins = [
     "http://localhost:8000",
