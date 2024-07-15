@@ -2,7 +2,7 @@ from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base
 
-from src.config import settings
+from src.core.config import settings
 
 database_url = settings.database_url
 database_params = {}
