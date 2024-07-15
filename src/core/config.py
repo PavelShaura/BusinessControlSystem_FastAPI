@@ -1,4 +1,16 @@
+from pathlib import Path
+
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BASE_DIR = Path(__file__).parent.parent
+
+
+class AuthJWT(BaseModel):
+    private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
+    public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
+    algorithm: str = "RS256"
+    access_token_expire_minutes: int = 15
 
 
 class Settings(BaseSettings):
@@ -11,6 +23,8 @@ class Settings(BaseSettings):
 
     REDIS_HOST: str
     REDIS_PORT: int
+
+    auth_jwt: AuthJWT = AuthJWT()
 
     @property
     def database_url(self):
@@ -32,7 +46,7 @@ class Settings(BaseSettings):
             f":{self.TEST_DB_PORT}/{self.TEST_DB_NAME}"
         )
 
-    model_config = SettingsConfigDict(env_file=".env/")
+    model_config = SettingsConfigDict(env_file="/home/pavel/PycharmProjects/BusinessControlSystem_FastAPI /.env")
 
 
 settings = Settings()
