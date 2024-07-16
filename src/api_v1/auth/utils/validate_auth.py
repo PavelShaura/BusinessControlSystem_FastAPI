@@ -1,7 +1,7 @@
 from fastapi import Form, HTTPException, status, Depends
 
-from src.auth.utils.password_utils import validate_password
-from src.user.repository import UserRepository, get_user_repository
+from src.api_v1.auth.utils.password_utils import validate_password
+from src.api_v1.user.repository import UserRepository, get_user_repository
 
 
 async def validate_auth_user(

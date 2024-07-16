@@ -5,8 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
-from src.auth.views import router as auth_router
-from src.core.config import settings
+from src.api_v1.auth.views import router as auth_router
 from src.middleware.auth_middleware import auth_middleware
 
 
@@ -19,8 +18,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, title="BCS_APP")
 
-
 app.include_router(auth_router)
+app.middleware("http")(auth_middleware)
 
 
 origins = [
@@ -40,8 +39,6 @@ app.add_middleware(
         "Authorization",
     ],
 )
-
-app.middleware("http")(auth_middleware)
 
 
 def custom_openapi():
