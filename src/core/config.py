@@ -15,8 +15,6 @@ class AuthJWT(BaseModel):
 
 class Settings(BaseSettings):
 
-    api_v1_prefix: str = "/api/v1"
-
     DB_HOST: str
     DB_PORT: int
     DB_USER: str

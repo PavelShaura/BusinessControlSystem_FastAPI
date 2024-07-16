@@ -1,18 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.schemas import TokenInfo
-from src.auth.utils.get_token_utils import (
-    validate_auth_user,
-    get_current_token_payload,
-    get_current_active_auth_user,
-)
+from src.auth.utils.validate_auth import validate_auth_user
 from src.auth.utils.jwt_utils import encode_jwt
 from src.auth.utils.password_utils import hash_password
 from src.core.database import get_async_session
-from src.user.models import User
 from src.user.repository import UserRepository
 from src.user.schemas import UserSchema, CreateUser, UserResponse, UserInfo
 
@@ -23,10 +18,12 @@ router = APIRouter(tags=["JWT"])
 def auth_user_issue_jwt(
     user: UserSchema = Depends(validate_auth_user),
 ):
+    current_time = datetime.now(timezone.utc)
     jwt_payload = {
         "sub": user.id,
         "username": user.username,
         "email": user.email,
+        "iat": int(current_time.timestamp()),
     }
     token = encode_jwt(jwt_payload)
     return TokenInfo(
@@ -38,15 +35,16 @@ def auth_user_issue_jwt(
 @router.get("/users/{username}", response_model=UserInfo)
 async def auth_user_check_self_info(
     username: str,
-    payload: dict = Depends(get_current_token_payload),
-    user: User = Depends(get_current_active_auth_user),
+    request: Request,
 ):
-    logged_in_at = datetime.fromtimestamp(payload.get("iat", 0))
+    user = request.state.user
+    payload = request.state.token_payload
     if user.username != username:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You are not authorized to view this user's information",
         )
+    logged_in_at = datetime.fromtimestamp(payload.get("iat", 0), timezone.utc)
     return UserInfo(username=user.username, email=user.email, logged_in_at=logged_in_at)
 
 
