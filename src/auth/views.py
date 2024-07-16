@@ -1,13 +1,13 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.schemas import TokenInfo
 from src.auth.utils.get_token_utils import (
     validate_auth_user,
     get_current_token_payload,
-    get_current_active_auth_user, oauth2_scheme,
+    get_current_active_auth_user,
 )
 from src.auth.utils.jwt_utils import encode_jwt
 from src.auth.utils.password_utils import hash_password
@@ -16,7 +16,7 @@ from src.user.models import User
 from src.user.repository import UserRepository
 from src.user.schemas import UserSchema, CreateUser, UserResponse, UserInfo
 
-router = APIRouter(prefix="/jwt", tags=["JWT"])
+router = APIRouter(tags=["JWT"])
 
 
 @router.post("/login/", response_model=TokenInfo)
@@ -24,7 +24,7 @@ def auth_user_issue_jwt(
     user: UserSchema = Depends(validate_auth_user),
 ):
     jwt_payload = {
-        "sub": user.username,
+        "sub": user.id,
         "username": user.username,
         "email": user.email,
     }
@@ -35,25 +35,25 @@ def auth_user_issue_jwt(
     )
 
 
-@router.get("/users/me/", response_model=UserInfo)
+@router.get("/users/{username}", response_model=UserInfo)
 async def auth_user_check_self_info(
-        token: str = Depends(oauth2_scheme),
-        payload: dict = Depends(get_current_token_payload),
-        user: User = Depends(get_current_active_auth_user),
+    username: str,
+    payload: dict = Depends(get_current_token_payload),
+    user: User = Depends(get_current_active_auth_user),
 ):
     logged_in_at = datetime.fromtimestamp(payload.get("iat", 0))
-
-    return UserInfo(
-        username=user.username,
-        email=user.email,
-        logged_in_at=logged_in_at
-    )
+    if user.username != username:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to view this user's information",
+        )
+    return UserInfo(username=user.username, email=user.email, logged_in_at=logged_in_at)
 
 
 @router.post("/register/", response_model=UserResponse)
 async def register_user(
-        user_data: CreateUser,
-        session: AsyncSession = Depends(get_async_session),
+    user_data: CreateUser,
+    session: AsyncSession = Depends(get_async_session),
 ):
     user_repo = UserRepository(session)
 
@@ -69,7 +69,7 @@ async def register_user(
         username=user_data.username,
         email=user_data.email,
         hashed_password=hashed_password,
-        active=True
+        active=True,
     )
 
     await session.commit()
