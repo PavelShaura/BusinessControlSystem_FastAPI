@@ -11,7 +11,7 @@ from src.core.database import get_async_session
 
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/jwt/login",
+    tokenUrl="/api/v1/login/",
 )
 
 
@@ -29,7 +29,7 @@ def get_current_token_payload(
     except InvalidTokenError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"invalid token error: {e}",
+            detail=f"invalid token error",
         )
     return payload
 
@@ -66,13 +66,13 @@ async def get_current_auth_user(
     payload: dict = Depends(get_current_token_payload),
     user_repo: UserRepository = Depends(get_user_repository),
 ) -> User:
-    username: str | None = payload.get("sub")
+    username: str | None = payload.get("username")
     user = await user_repo.get_by_username(username)
     if user:
         return user
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="token invalid (user not found)",
+        detail="token invalid",
     )
 
 

@@ -5,6 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.auth.views import router as auth_router
+from src.core.config import settings
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,7 +15,7 @@ async def lifespan(app: FastAPI):
     print("App is shutting down...")
 
 
-app = FastAPI(lifespan=lifespan, title="BCS_APP")
+app = FastAPI(lifespan=lifespan, title="BCS_APP", root_path=settings.api_v1_prefix)
 
 
 app.include_router(auth_router)

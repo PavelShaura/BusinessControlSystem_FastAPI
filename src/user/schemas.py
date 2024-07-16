@@ -22,6 +22,7 @@ class UserResponse(BaseModel):
 class UserSchema(BaseModel):
     model_config = ConfigDict(strict=True)
 
+    id: int
     username: str
     password: bytes
     email: EmailStr | None = None
