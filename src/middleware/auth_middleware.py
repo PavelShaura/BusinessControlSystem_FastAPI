@@ -2,20 +2,26 @@ from fastapi import Request, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import JSONResponse
 
-from src.auth.utils.get_current_user_info import (
+from src.api_v1.auth import (
     get_current_token_payload,
     get_current_auth_user,
     get_current_active_auth_user,
 )
 
-from src.user.repository import get_user_repository
+from src.api_v1.user.repository import get_user_repository
 from src.core.database import get_async_session
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/")
 
 
 async def auth_middleware(request: Request, call_next):
-    public_paths = ["/login/", "/register/", "/docs", "/redoc", "/openapi.json"]
+    public_paths = [
+        "/api/v1/login/",
+        "/api/v1/register/",
+        "/docs",
+        "/redoc",
+        "/openapi.json",
+    ]
 
     if any(request.url.path.startswith(path) for path in public_paths):
         return await call_next(request)

@@ -3,18 +3,18 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.schemas import TokenInfo
-from src.auth.utils.validate_auth import validate_auth_user
-from src.auth.utils.jwt_utils import encode_jwt
-from src.auth.utils.password_utils import hash_password
+from src.api_v1.auth.schemas import TokenInfo
+from src.api_v1.auth.utils.validate_auth import validate_auth_user
+from src.api_v1.auth.utils.jwt_utils import encode_jwt
+from src.api_v1.auth.utils.password_utils import hash_password
 from src.core.database import get_async_session
-from src.user.repository import UserRepository
-from src.user.schemas import UserSchema, CreateUser, UserResponse, UserInfo
+from src.api_v1.user.repository import UserRepository
+from src.api_v1.user.schemas import UserSchema, CreateUser, UserResponse, UserInfo
 
 router = APIRouter(tags=["JWT"])
 
 
-@router.post("/login/", response_model=TokenInfo)
+@router.post("/api/v1/login/", response_model=TokenInfo)
 def auth_user_issue_jwt(
     user: UserSchema = Depends(validate_auth_user),
 ):
@@ -32,7 +32,7 @@ def auth_user_issue_jwt(
     )
 
 
-@router.get("/users/{username}", response_model=UserInfo)
+@router.get("/api/v1/users/{username}", response_model=UserInfo)
 async def auth_user_check_self_info(
     username: str,
     request: Request,
@@ -48,7 +48,7 @@ async def auth_user_check_self_info(
     return UserInfo(username=user.username, email=user.email, logged_in_at=logged_in_at)
 
 
-@router.post("/register/", response_model=UserResponse)
+@router.post("/api/v1/register/", response_model=UserResponse)
 async def register_user(
     user_data: CreateUser,
     session: AsyncSession = Depends(get_async_session),
