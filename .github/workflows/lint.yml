@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        ref: ${{ github.head_ref }}
 
     - name: Set up Python
       uses: actions/setup-python@v2
@@ -40,4 +42,7 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add .
         git commit -m "Apply Ruff fixes" || echo "No changes to commit"
-        git push || echo "No changes to push"
+        git push origin HEAD:${{ github.head_ref }} || echo "No changes to push"
+
+  
+    
