@@ -25,6 +25,8 @@ class UserSchema(BaseModel):
     id: int
     username: str
     password: bytes
+    is_admin: bool
+    company_id: int
     email: EmailStr | None = None
     active: bool = True
 

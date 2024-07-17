@@ -13,7 +13,7 @@ conf = ConnectionConfig(
     MAIL_TLS=True,
     MAIL_SSL=False,
     USE_CREDENTIALS=True,
-    VALIDATE_CERTS=True
+    VALIDATE_CERTS=True,
 )
 
 
@@ -33,7 +33,7 @@ async def send_invite_email(email: EmailStr, invite_token: str):
         subject="Invitation to Join Our Platform",
         recipients=[email],
         body=html,
-        subtype="html"
+        subtype="html",
     )
 
     fm = FastMail(conf)
