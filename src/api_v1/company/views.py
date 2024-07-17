@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from pydantic import EmailStr, BaseModel
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import EmailStr
 
 from src.api_v1.auth.utils.password_utils import hash_password
 from src.api_v1.company.utils.email_utils import send_invite_email
@@ -12,7 +12,7 @@ from src.api_v1.company.schemas import (
     InviteResponse,
     EmployeeCreate,
     SignUpComplete,
-    CompanyInfo, SignUpRequest,
+    SignUpRequest,
 )
 from src.utils.unit_of_work import UnitOfWork, get_uow
 
@@ -35,14 +35,13 @@ async def sign_up(sign_up_data: SignUpRequest, uow: UnitOfWork = Depends(get_uow
     return {"message": "Verification email sent", "email": sign_up_data.email}
 
 
-@router.get("api/v1/check_account/{account}")
+@router.get("api/v1/check_account/{account}", response_model=InviteResponse)
 async def check_account(account: EmailStr, uow: UnitOfWork = Depends(get_uow)):
     async with uow:
         user = await uow.user_repository.get_by_email(account)
         if user:
             raise HTTPException(status_code=400, detail="Email already registered")
-
-    return {"message": "Email is available"}
+    return InviteResponse(message="Email is available")
 
 
 @router.post("api/v1/auth/sign-up#verify", response_model=InviteResponse)
