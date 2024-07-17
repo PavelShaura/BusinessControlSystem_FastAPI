@@ -10,7 +10,7 @@ router = APIRouter(tags=["sign-in"])
 
 
 @router.post("/api/v1/auth/sign-in", response_model=TokenInfo)
-async def sign_in(user: UserSchema = Depends(validate_auth_user)):
+async def sign_in_on_app(user: UserSchema = Depends(validate_auth_user)):
     current_time = datetime.now(timezone.utc)
     jwt_payload = {
         "sub": str(user.id),

@@ -12,9 +12,10 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/sign-in")
 async def auth_middleware(request: Request, call_next):
     public_paths = [
         "/api/v1/auth/sign-in",
-        "api/v1/auth/sign-up#verify",
-        "api/v1/auth/sign-up#complete",
-        "api/v1/check_account/",
+        "/api/v1/auth/sign-up",
+        "/api/v1/auth/sign-up-verify",
+        "/api/v1/auth/sign-up-complete",
+        "/api/v1/check_account/",
         "/docs",
         "/redoc",
         "/openapi.json",

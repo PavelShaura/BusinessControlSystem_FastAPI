@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
 from src.api_v1.auth.views import router as auth_router
-from src.api_v1.auth.views import router as company_router
+from src.api_v1.company.views import router as company_router
 from src.middleware.auth_middleware import auth_middleware
 
 
@@ -21,6 +21,7 @@ app = FastAPI(lifespan=lifespan, title="BCS_APP")
 
 app.include_router(auth_router)
 app.include_router(company_router)
+
 app.middleware("http")(auth_middleware)
 
 
