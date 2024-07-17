@@ -1,5 +1,5 @@
 import secrets
-from datetime import datetime, timedelta
+
 from redis import Redis
 from src.core.config import settings
 
@@ -11,7 +11,6 @@ def generate_invite_token():
 
 
 def save_invite_token(email: str, token: str):
-    expiration = datetime.utcnow() + timedelta(hours=24)
     redis.setex(f"invite:{email}", 86400, token)
 
 
