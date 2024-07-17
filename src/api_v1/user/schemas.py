@@ -10,5 +10,4 @@ class UserSchema(BaseModel):
     is_admin: bool
     company_id: int
     email: EmailStr | None = None
-    active: bool = True
-
+    is_active: bool = True

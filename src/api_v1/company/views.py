@@ -19,7 +19,7 @@ from src.utils.unit_of_work import UnitOfWork, get_uow
 router = APIRouter(tags=["sign-up"])
 
 
-@router.post("api/v1/auth/sign-up")
+@router.post("/api/v1/auth/sign-up")
 async def sign_up(sign_up_data: SignUpRequest, uow: UnitOfWork = Depends(get_uow)):
     async with uow:
         existing_user = await uow.user_repository.get_by_email(sign_up_data.email)
@@ -35,7 +35,7 @@ async def sign_up(sign_up_data: SignUpRequest, uow: UnitOfWork = Depends(get_uow
     return {"message": "Verification email sent", "email": sign_up_data.email}
 
 
-@router.get("api/v1/check_account/{account}", response_model=InviteResponse)
+@router.get("/api/v1/check_account/{account}", response_model=InviteResponse)
 async def check_account(account: EmailStr, uow: UnitOfWork = Depends(get_uow)):
     async with uow:
         user = await uow.user_repository.get_by_email(account)
@@ -44,14 +44,14 @@ async def check_account(account: EmailStr, uow: UnitOfWork = Depends(get_uow)):
     return InviteResponse(message="Email is available")
 
 
-@router.post("api/v1/auth/sign-up#verify", response_model=InviteResponse)
+@router.post("/api/v1/auth/sign-up-verify", response_model=InviteResponse)
 async def verify_sign_up(account: str, invite_token: str):
     if not verify_invite_token(account, invite_token):
         raise HTTPException(status_code=400, detail="Invalid or expired invite token")
     return InviteResponse(message="Email verified successfully")
 
 
-@router.post("api/v1/auth/sign-up#complete", response_model=EmployeeCreate)
+@router.post("/api/v1/auth/sign-up-complete", response_model=EmployeeCreate)
 async def complete_sign_up(
     user_data: SignUpComplete, uow: UnitOfWork = Depends(get_uow)
 ):

@@ -16,6 +16,7 @@ def save_invite_token(email: str, token: str):
 
 def verify_invite_token(email: str, token: str):
     stored_token = redis.get(f"invite:{email}")
+    print(stored_token)
     if stored_token and stored_token.decode() == token:
         redis.delete(f"invite:{email}")
         return True
