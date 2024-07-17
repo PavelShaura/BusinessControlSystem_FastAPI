@@ -5,15 +5,15 @@ from src.api_v1.user.repository import UserRepository, get_user_repository
 
 
 async def validate_auth_user(
-    username: str = Form(),
+    email: str = Form(),
     password: str = Form(),
     user_repo: UserRepository = Depends(get_user_repository),
 ):
     unauthed_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="invalid username or password",
+        detail="invalid email or password",
     )
-    user = await user_repo.get_by_username(username)
+    user = await user_repo.get_by_email(email)
     if not user:
         raise unauthed_exc
 
