@@ -9,10 +9,10 @@ from src.api_v1.user.repository import UserRepository
 def get_current_token_payload(token: str) -> dict:
     try:
         payload = decode_jwt(token=token)
-    except InvalidTokenError as e:
+    except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"invalid token error",
+            detail="invalid token error",
         )
     return payload
 

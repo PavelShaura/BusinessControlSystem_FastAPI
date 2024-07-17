@@ -22,15 +22,14 @@ async def send_invite_email(email: EmailStr, invite_token: str):
     <html>
         <body>
             <h1>Welcome to Our Platform!</h1>
-            <p>You have been invited to join. Please use the following token to complete your registration:</p>
+            <p>Благодарим за регистрацию вашей компании! Для подтверждения введите код на странице:</p>
             <h2>{invite_token}</h2>
-            <p>This token will expire in 24 hours.</p>
         </body>
     </html>
     """
 
     message = MessageSchema(
-        subject="Invitation to Join Our Platform",
+        subject="BusinessControlSystem_app",
         recipients=[email],
         body=html,
         subtype="html",
