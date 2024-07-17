@@ -6,7 +6,7 @@ from src.api_v1.auth.utils.jwt_utils import encode_jwt
 from src.api_v1.auth.utils.validate_auth import validate_auth_user
 from src.api_v1.user.schemas import UserSchema
 
-router = APIRouter(tags=["auth"])
+router = APIRouter(tags=["sign-in"])
 
 
 @router.post("/api/v1/auth/sign-in", response_model=TokenInfo)

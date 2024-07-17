@@ -23,6 +23,11 @@ class InviteResponse(BaseModel):
     message: str
 
 
+class SignUpRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
 class SignUpComplete(BaseModel):
     account: EmailStr
     password: str
