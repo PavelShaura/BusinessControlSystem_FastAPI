@@ -5,8 +5,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
-from src.api_v1.auth.views import router as auth_router
-from src.api_v1.company.views import router as company_router
+from src.api.v1.auth.router import router as auth_router
+from src.api.v1.company.router import router as company_router
 from src.middleware.auth_middleware import auth_middleware
 
 

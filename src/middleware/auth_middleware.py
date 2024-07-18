@@ -2,8 +2,8 @@ from fastapi import Request, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import JSONResponse
 
-from src.api_v1.auth.utils.jwt_utils import decode_jwt
-from src.api_v1.user.repository import UserRepository
+from src.api.v1.auth.utils.jwt_utils import decode_jwt
+from src.api.v1.user.repository import UserRepository
 from src.core.database import get_async_session
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/sign-in")
@@ -11,6 +11,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/sign-in")
 
 async def auth_middleware(request: Request, call_next):
     public_paths = [
+        "/",
         "/api/v1/auth/sign-in",
         "/api/v1/auth/sign-up",
         "/api/v1/auth/sign-up-verify",

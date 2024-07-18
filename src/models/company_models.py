@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from src.utils.base_model import BaseModel
+from src.models.base_model import BaseModel
 
 
 class Company(BaseModel):

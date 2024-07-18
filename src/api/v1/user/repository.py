@@ -1,10 +1,7 @@
-from fastapi import Depends
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.core.database import get_async_session
 from src.utils.repository import SqlAlchemyRepository
-from src.api_v1.user.models import User
+from src.models.user_models import User
 
 
 class UserRepository(SqlAlchemyRepository):
@@ -29,6 +26,3 @@ class UserRepository(SqlAlchemyRepository):
         result = await self.session.execute(query)
         return result.scalars().all()
 
-
-async def get_user_repository(session: AsyncSession = Depends(get_async_session)):
-    return UserRepository(session)
