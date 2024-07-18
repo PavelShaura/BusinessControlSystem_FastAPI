@@ -1,3 +1,5 @@
+from fastapi import BackgroundTasks
+
 from src.api.v1.company.utils.email_utils import send_invite_email
 from src.api.v1.company.utils.invite_utils import (
     generate_invite_token,
@@ -7,7 +9,7 @@ from src.services.base_service import BaseService
 
 
 class SignUpService(BaseService):
-    async def execute(self, uow, **kwargs):
+    async def execute(self, uow, background_tasks: BackgroundTasks, **kwargs):
         email = kwargs.get("email")
         async with uow:
             existing_user = await uow.user_repository.get_by_email(email)
@@ -17,6 +19,7 @@ class SignUpService(BaseService):
             invite_token = generate_invite_token()
             save_invite_token(email, invite_token)
 
-            await send_invite_email(email, invite_token)
+            # Добавление задачи для отправки письма в фоне
+            background_tasks.add_task(send_invite_email, email, invite_token)
 
             return {"message": "Verification email sent", "email": email}
