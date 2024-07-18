@@ -25,4 +25,3 @@ class UserRepository(SqlAlchemyRepository):
         query = select(self.model).where(self.model.company_id == company_id)
         result = await self.session.execute(query)
         return result.scalars().all()
-
