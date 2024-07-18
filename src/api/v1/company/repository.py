@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from src.api_v1.company.models import Company
+from src.models.company_models import Company
 from src.utils.repository import SqlAlchemyRepository
 
 

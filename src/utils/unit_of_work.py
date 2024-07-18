@@ -2,9 +2,9 @@ from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.api.v1.user.repository import UserRepository
 from src.core.database import async_session_maker
-from src.api_v1.user.repository import UserRepository
-from src.api_v1.company.repository import CompanyRepository
+from src.api.v1.company.repository import CompanyRepository
 from src.utils.repository import AbstractRepository
 
 

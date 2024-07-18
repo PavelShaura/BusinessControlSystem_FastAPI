@@ -1,9 +1,10 @@
-from fastapi import HTTPException, status
 from jwt import InvalidTokenError
 
-from src.api_v1.auth.utils.jwt_utils import decode_jwt
-from src.api_v1.user.models import User
-from src.api_v1.user.repository import UserRepository
+from fastapi import HTTPException, status
+
+from src.api.v1.auth.utils.jwt_utils import decode_jwt
+from src.api.v1.user.repository import UserRepository
+from src.models.user_models import User
 
 
 def get_current_token_payload(token: str) -> dict:
