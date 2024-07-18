@@ -10,8 +10,8 @@ from src.schemas.auth_schemas import TokenInfo
 
 class SignInService(BaseService):
     async def execute(self, uow, **kwargs) -> TokenInfo:
-        email = kwargs.get('email')
-        password = kwargs.get('password')
+        email = kwargs.get("email")
+        password = kwargs.get("password")
 
         user = await self._validate_auth_user(email, password, uow)
 
@@ -38,8 +38,8 @@ class SignInService(BaseService):
                 raise unauthed_exc
 
             if not validate_password(
-                    password=password,
-                    hashed_password=user.hashed_password,
+                password=password,
+                hashed_password=user.hashed_password,
             ):
                 raise unauthed_exc
 

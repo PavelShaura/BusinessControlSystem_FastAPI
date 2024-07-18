@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, BackgroundTasks
 from pydantic import EmailStr
 
 from src.schemas.company_schemas import (
@@ -16,17 +16,21 @@ router = APIRouter(tags=["sign-up"])
 
 
 @router.post("/api/v1/auth/sign-up")
-async def sign_up(sign_up_data: SignUpRequest, uow: UnitOfWork = Depends(get_uow)):
-    return await SignUpService()(uow, email=sign_up_data.email, password=sign_up_data.password)
+async def sign_up(sign_up_data: SignUpRequest, background_tasks: BackgroundTasks, uow: UnitOfWork = Depends(get_uow)):
+    return await SignUpService().execute(uow, background_tasks, email=sign_up_data.email, password=sign_up_data.password)
 
 
 @router.post("/api/v1/auth/sign-up-verify")
-async def verify_sign_up(account: str, invite_token: str, uow: UnitOfWork = Depends(get_uow)):
+async def verify_sign_up(
+    account: str, invite_token: str, uow: UnitOfWork = Depends(get_uow)
+):
     return await VerifySignUpService()(uow, account=account, invite_token=invite_token)
 
 
 @router.post("/api/v1/auth/sign-up-complete")
-async def complete_sign_up(user_data: SignUpComplete, uow: UnitOfWork = Depends(get_uow)):
+async def complete_sign_up(
+    user_data: SignUpComplete, uow: UnitOfWork = Depends(get_uow)
+):
     return await CompleteSignUpService()(uow, user_data=user_data)
 
 

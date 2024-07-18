@@ -4,7 +4,7 @@ from src.services.base_service import BaseService
 
 class CompleteSignUpService(BaseService):
     async def execute(self, uow, **kwargs):
-        user_data = kwargs.get('user_data')
+        user_data = kwargs.get("user_data")
         async with uow:
             existing_user = await uow.user_repository.get_by_email(user_data.account)
             if existing_user:
@@ -12,7 +12,9 @@ class CompleteSignUpService(BaseService):
 
             company = await uow.company_repository.get_by_name(user_data.company_name)
             if not company:
-                company = await uow.company_repository.create(name=user_data.company_name)
+                company = await uow.company_repository.create(
+                    name=user_data.company_name
+                )
 
             hashed_password = hash_password(user_data.password)
             new_user = await uow.user_repository.create(
