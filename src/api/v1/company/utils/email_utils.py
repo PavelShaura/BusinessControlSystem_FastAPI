@@ -1,6 +1,5 @@
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from pydantic import EmailStr
-
 from src.core.config import settings
 
 conf = ConnectionConfig(
@@ -15,23 +14,52 @@ conf = ConnectionConfig(
 )
 
 
-async def send_invite_email(email: EmailStr, invite_token: str):
-    html = f"""
-    <html>
-        <body>
-            <h1>Welcome to Our Platform!</h1>
-            <p>Благодарим за регистрацию вашей компании! Для подтверждения введите код на странице:</p>
-            <h2>{invite_token}</h2>
-        </body>
-    </html>
-    """
-
+async def send_email(subject: str, email: EmailStr, html_content: str):
     message = MessageSchema(
-        subject="BusinessControlSystem_app",
+        subject=subject,
         recipients=[email],
-        body=html,
+        body=html_content,
         subtype="html",
     )
 
     fm = FastMail(conf)
     await fm.send_message(message)
+
+
+async def send_invite_email(email: EmailStr, invite_url: str):
+    html = f"""
+    <html>
+        <body>
+            <h1>Welcome to Our Platform!</h1>
+            <p>Благодарим за регистрацию вашей компании! Для завершения регистрации введите токен:</p>
+            <a href="{invite_url}">Complete Registration</a>
+        </body>
+    </html>
+    """
+    await send_email("BusinessControlSystem_app - Registration", email, html)
+
+
+async def send_rebind_email(email: EmailStr, rebind_url: str):
+    html = f"""
+    <html>
+        <body>
+            <h1>Rebind Email Address</h1>
+            <p>Для подтверждения привязки новой почты, пожалуйста, перейдите по следующей ссылке:</p>
+            <a href="{rebind_url}">Confirm new email</a>
+        </body>
+    </html>
+    """
+    await send_email("BusinessControlSystem_app - Rebind Email", email, html)
+
+
+async def send_initial_invite_email(email: EmailStr, invite_url: str):
+    html = f"""
+    <html>
+        <body>
+            <h1>Welcome to Our Company!</h1>
+            <p>Вы были приглашены присоединиться к нашей компании. Для завершения регистрации, пожалуйста, перейдите по следующей ссылке:</p>
+            <a href="{invite_url}">Complete Registration</a>
+        </body>
+    </html>
+    """
+    await send_email("BusinessControlSystem_app - Invitation", email, html)
