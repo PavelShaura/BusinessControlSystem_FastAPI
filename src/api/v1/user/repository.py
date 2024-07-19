@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from src.utils.repository import SqlAlchemyRepository
 from src.models.user_models import User
@@ -25,3 +25,17 @@ class UserRepository(SqlAlchemyRepository):
         query = select(self.model).where(self.model.company_id == company_id)
         result = await self.session.execute(query)
         return result.scalars().all()
+
+    async def update(self, user: User):
+        query = (
+            update(self.model)
+            .where(self.model.id == user.id)
+            .values(
+                {
+                    c.name: getattr(user, c.name)
+                    for c in self.model.__table__.columns
+                    if c.name != "id"
+                }
+            )
+        )
+        await self.session.execute(query)

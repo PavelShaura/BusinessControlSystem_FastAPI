@@ -7,6 +7,7 @@ from fastapi.openapi.utils import get_openapi
 
 from src.api.v1.auth.router import router as auth_router
 from src.api.v1.company.router import router as company_router
+from src.api.v1.employee.router import router as employee_router
 from src.middleware.auth_middleware import auth_middleware
 
 
@@ -21,6 +22,7 @@ app = FastAPI(lifespan=lifespan, title="BCS_APP")
 
 app.include_router(auth_router)
 app.include_router(company_router)
+app.include_router(employee_router)
 
 app.middleware("http")(auth_middleware)
 

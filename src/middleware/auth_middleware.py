@@ -11,11 +11,11 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/sign-in")
 
 async def auth_middleware(request: Request, call_next):
     public_paths = [
-        "/",
         "/api/v1/auth/sign-in",
         "/api/v1/auth/sign-up",
         "/api/v1/auth/sign-up-verify",
         "/api/v1/auth/sign-up-complete",
+        "/api/v1/employees/registration-complete",
         "/api/v1/check_account/",
         "/docs",
         "/redoc",
@@ -46,7 +46,7 @@ async def auth_middleware(request: Request, call_next):
                     status_code=401, detail="User not found or invalid token data"
                 )
 
-            if not user.active:
+            if not user.is_active:
                 raise HTTPException(status_code=403, detail="User inactive")
 
             request.state.user = user
@@ -57,7 +57,5 @@ async def auth_middleware(request: Request, call_next):
         return JSONResponse(
             status_code=http_exc.status_code, content={"detail": http_exc.detail}
         )
-    except Exception as e:
-        return JSONResponse(status_code=401, content={"detail": str(e)})
 
     return await call_next(request)

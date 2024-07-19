@@ -30,7 +30,7 @@ async def get_current_auth_user(payload: dict, user_repo: UserRepository) -> Use
 
 
 async def get_current_active_auth_user(user: User):
-    if user.active:
+    if user.is_active:
         return user
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
