@@ -27,7 +27,9 @@ async def sign_up(
 async def verify_sign_up(
     account: str, invite_token: str, uow: UnitOfWork = Depends(get_uow)
 ):
-    return await company_services.VerifySignUpService()(uow, account=account, invite_token=invite_token)
+    return await company_services.VerifySignUpService()(
+        uow, account=account, invite_token=invite_token
+    )
 
 
 @router.post("/api/v1/auth/sign-up-complete")
