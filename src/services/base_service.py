@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from src.utils.unit_of_work import UnitOfWork
-
 
 class BaseService(ABC):
     """
@@ -10,7 +8,7 @@ class BaseService(ABC):
     """
 
     @abstractmethod
-    async def execute(self, uow: UnitOfWork, **kwargs) -> Any:
+    async def execute(self, *args, **kwargs) -> Any:
         """
         Выполнить основную логику сервиса.
 
@@ -24,7 +22,7 @@ class BaseService(ABC):
         pass
 
     @classmethod
-    async def __call__(cls, uow: UnitOfWork, **kwargs) -> Any:
+    async def __call__(cls, *args, **kwargs) -> Any:
         """
         Вызвать метод execute через экземпляр класса.
 
@@ -35,4 +33,4 @@ class BaseService(ABC):
         Возвращает:
         Результат выполнения основной логики сервиса.
         """
-        return await cls().execute(uow, **kwargs)
+        return await cls().execute(*args, **kwargs)
