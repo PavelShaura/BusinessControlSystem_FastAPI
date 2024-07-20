@@ -1,4 +1,5 @@
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+
 from pydantic import EmailStr
 from src.core.config import settings
 
@@ -32,7 +33,7 @@ async def send_invite_email(email: EmailStr, invite_url: str):
         <body>
             <h1>Welcome to Our Platform!</h1>
             <p>Благодарим за регистрацию вашей компании! Для завершения регистрации введите токен:</p>
-            <a href="{invite_url}">Complete Registration</a>
+            <p>{invite_url}</p>
         </body>
     </html>
     """

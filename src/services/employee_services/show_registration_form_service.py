@@ -4,12 +4,14 @@ from fastapi import HTTPException
 from fastapi.responses import HTMLResponse
 
 from src.core.config import settings
+from src.schemas.employee_schemas import TokenSchema
 from src.services.base_service import BaseService
 
 
 class ShowRegistrationFormService(BaseService):
     async def execute(self, uow, **kwargs) -> HTMLResponse:
-        token = kwargs.get("token")
+        token_request = TokenSchema(**kwargs)
+        token = token_request.token
         try:
             payload = jwt.decode(
                 token,

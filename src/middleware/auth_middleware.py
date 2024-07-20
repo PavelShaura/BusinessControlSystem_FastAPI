@@ -17,6 +17,7 @@ async def auth_middleware(request: Request, call_next):
         "/api/v1/auth/sign-up-complete",
         "/api/v1/employees/registration-complete",
         "/api/v1/check_account/",
+        "/api/v1/employees/confirm-rebind-email",
         "/docs",
         "/redoc",
         "/openapi.json",

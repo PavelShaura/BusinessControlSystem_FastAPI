@@ -1,14 +1,15 @@
 import jwt
 
 from fastapi import HTTPException
-
 from src.services.base_service import BaseService
 from src.core.config import settings
+from src.schemas.employee_schemas import TokenSchema, EmployeeMessageResponse
 
 
 class ConfirmRebindEmailService(BaseService):
     async def execute(self, uow, **kwargs):
-        token = kwargs.get("token")
+        confirm_rebind_email_request = TokenSchema(**kwargs)
+        token = confirm_rebind_email_request.token
 
         try:
             payload = jwt.decode(
@@ -30,4 +31,4 @@ class ConfirmRebindEmailService(BaseService):
             await uow.user_repository.update(employee)
             await uow.commit()
 
-        return {"message": "Email successfully rebound"}
+        return EmployeeMessageResponse(message="Email successfully rebound").model_dump()

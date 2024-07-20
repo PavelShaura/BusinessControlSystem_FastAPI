@@ -4,6 +4,7 @@ from fastapi import HTTPException
 
 from src.api.v1.company.utils.email_utils import send_initial_invite_email
 from src.core.config import settings
+from src.schemas.employee_schemas import GenerateURLEmployeeInviteResponse
 from src.services.base_service import BaseService
 
 
@@ -31,4 +32,7 @@ class GenerateURLEmployeeInviteService(BaseService):
 
             await send_initial_invite_email(employee.email, invite_url)
 
-            return {"message": "Invite sent successfully", "invite_url": invite_url}
+            return GenerateURLEmployeeInviteResponse(
+                message="Invite sent successfully",
+                invite_url=invite_url
+            ).model_dump()

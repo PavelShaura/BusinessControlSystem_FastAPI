@@ -1,15 +1,17 @@
 from fastapi import HTTPException
 
 from src.api.v1.auth.utils.password_utils import validate_password
+from src.schemas.employee_schemas import UpdateEmployeeDataRequest, EmployeeMessageResponse
 from src.services.base_service import BaseService
 
 
 class UpdateEmployeeDataService(BaseService):
     async def execute(self, uow, **kwargs):
-        request = kwargs.get("request")
-        first_name = kwargs.get("first_name")
-        last_name = kwargs.get("last_name")
-        current_password = kwargs.get("current_password")
+        request_data = UpdateEmployeeDataRequest(**kwargs)
+        first_name = request_data.first_name
+        last_name = request_data.last_name
+        current_password = request_data.current_password
+        request = request_data.request
 
         user_id = request.state.user.id
 
@@ -29,4 +31,5 @@ class UpdateEmployeeDataService(BaseService):
             await uow.user_repository.update(employee)
             await uow.commit()
 
-        return {"message": "Employee data updated successfully"}
+        return EmployeeMessageResponse(message="Employee data updated successfully").model_dump()
+
