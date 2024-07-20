@@ -9,16 +9,18 @@ router = APIRouter(tags=["employees"])
 
 @router.post("/api/v1/employees/create", response_model=EmployeeResponse)
 async def create_employee(
-        employee_data: CreateEmployeeRequest,
-        request: Request,
-        uow: UnitOfWork = Depends(get_uow)
+    employee_data: CreateEmployeeRequest,
+    request: Request,
+    uow: UnitOfWork = Depends(get_uow),
 ):
-    return await employee_services.CreateEmployeeService()(uow, employee_data=employee_data, request=request)
+    return await employee_services.CreateEmployeeService()(
+        uow, employee_data=employee_data, request=request
+    )
 
 
 @router.post("/api/v1/employees/{employee_id}/invite")
 async def generate_employee_invite(
-        employee_id: int, request: Request, uow: UnitOfWork = Depends(get_uow)
+    employee_id: int, request: Request, uow: UnitOfWork = Depends(get_uow)
 ):
     return await employee_services.GenerateURLEmployeeInviteService()(
         uow, employee_id=employee_id, request=request
@@ -32,10 +34,10 @@ async def show_registration_form(token: str, uow: UnitOfWork = Depends(get_uow))
 
 @router.post("/api/v1/employees/registration-complete")
 async def complete_employee_registration(
-        token: str = Form(...),
-        password: str = Form(...),
-        password_confirm: str = Form(...),
-        uow: UnitOfWork = Depends(get_uow),
+    token: str = Form(...),
+    password: str = Form(...),
+    password_confirm: str = Form(...),
+    uow: UnitOfWork = Depends(get_uow),
 ):
     return await employee_services.EmployeeRegistrationCompleteService()(
         uow, token=token, password=password, password_confirm=password_confirm
@@ -44,11 +46,11 @@ async def complete_employee_registration(
 
 @router.patch("/api/v1/employees/update-data")
 async def update_employee_data(
-        request: Request,
-        first_name: str = Form(None),
-        last_name: str = Form(None),
-        current_password: str = Form(...),
-        uow: UnitOfWork = Depends(get_uow),
+    request: Request,
+    first_name: str = Form(None),
+    last_name: str = Form(None),
+    current_password: str = Form(...),
+    uow: UnitOfWork = Depends(get_uow),
 ):
     return await employee_services.UpdateEmployeeDataService()(
         uow,
@@ -61,10 +63,10 @@ async def update_employee_data(
 
 @router.post("/api/v1/employees/rebind-email")
 async def rebind_email(
-        request: Request,
-        new_email: str = Form(...),
-        current_password: str = Form(...),
-        uow: UnitOfWork = Depends(get_uow),
+    request: Request,
+    new_email: str = Form(...),
+    current_password: str = Form(...),
+    uow: UnitOfWork = Depends(get_uow),
 ):
     return await employee_services.RebindEmailService()(
         uow,

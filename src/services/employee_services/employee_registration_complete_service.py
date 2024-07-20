@@ -4,7 +4,12 @@ from fastapi import HTTPException
 
 from src.api.v1.auth.utils.password_utils import hash_password
 from src.core.config import settings
-from src.schemas.employee_schemas import EmployeeRegistrationCompleteSchema, EmployeeRegistrationCompleteRequest, EmployeeRegistrationCompleteResponse, EmployeeDataResponse
+from src.schemas.employee_schemas import (
+    EmployeeRegistrationCompleteSchema,
+    EmployeeRegistrationCompleteRequest,
+    EmployeeRegistrationCompleteResponse,
+    EmployeeDataResponse,
+)
 from src.services.base_service import BaseService
 
 
@@ -54,10 +59,9 @@ class EmployeeRegistrationCompleteService(BaseService):
             last_name=employee.last_name,
             is_admin=employee.is_admin,
             is_active=employee.is_active,
-            company_id=employee.company_id
+            company_id=employee.company_id,
         )
 
         return EmployeeRegistrationCompleteResponse(
-            message="Employee registration completed successfully",
-            data=response_data
+            message="Employee registration completed successfully", data=response_data
         ).model_dump()

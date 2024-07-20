@@ -34,5 +34,5 @@ class CreateEmployeeService(BaseService):
             first_name=new_employee.first_name,
             last_name=new_employee.last_name,
             company_id=new_employee.company_id,
-            is_active=new_employee.is_active
+            is_active=new_employee.is_active,
         ).model_dump()

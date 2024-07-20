@@ -33,5 +33,5 @@ class CompleteSignUpService(BaseService):
                 password=hashed_password,
                 first_name=new_user.first_name,
                 last_name=new_user.last_name,
-                company_name=company.name
+                company_name=company.name,
             ).model_dump()

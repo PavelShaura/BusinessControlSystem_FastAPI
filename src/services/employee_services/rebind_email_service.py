@@ -45,6 +45,5 @@ class RebindEmailService(BaseService):
             await send_rebind_email(new_email, rebind_url)
 
             return RebindEmailResponse(
-                message="Rebind email sent successfully",
-                rebind_url=rebind_url
+                message="Rebind email sent successfully", rebind_url=rebind_url
             ).model_dump()

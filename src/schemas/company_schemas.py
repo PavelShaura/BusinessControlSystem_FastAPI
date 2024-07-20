@@ -8,9 +8,11 @@ class MessageResponse(BaseModel):
 class SignUpRequest(BaseModel):
     email: EmailStr
 
+
 class SignUpResponse(BaseModel):
     message: str
     email: EmailStr
+
 
 class CompleteSignUpRequest(BaseModel):
     account: EmailStr
@@ -26,6 +28,7 @@ class CompleteSignUpResponse(BaseModel):
     first_name: str
     last_name: str
     company_name: str
+
 
 class VerifySignUpRequest(BaseModel):
     email: EmailStr

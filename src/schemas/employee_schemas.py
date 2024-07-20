@@ -3,10 +3,12 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 from fastapi import Request
 
+
 class CreateEmployeeRequest(BaseModel):
     email: EmailStr
     first_name: str
     last_name: str
+
 
 class EmployeeResponse(BaseModel):
     id: int
@@ -30,10 +32,12 @@ class TokenSchema(BaseModel):
 class EmployeeMessageResponse(BaseModel):
     message: str
 
+
 class EmployeeRegistrationCompleteRequest(BaseModel):
     password: str
     password_confirm: str
     token: str
+
 
 class EmployeeDataResponse(BaseModel):
     email: EmailStr
@@ -43,9 +47,11 @@ class EmployeeDataResponse(BaseModel):
     is_active: bool
     company_id: int
 
+
 class EmployeeRegistrationCompleteResponse(BaseModel):
     message: str
     data: EmployeeDataResponse
+
 
 class GenerateURLEmployeeInviteResponse(BaseModel):
     message: str
@@ -67,11 +73,12 @@ class RebindEmailResponse(BaseModel):
 
 
 class UpdateEmployeeDataRequest(BaseModel):
-    first_name: Optional[str] = Field(None, description="New first name of the employee")
+    first_name: Optional[str] = Field(
+        None, description="New first name of the employee"
+    )
     last_name: Optional[str] = Field(None, description="New last name of the employee")
     current_password: str = Field(..., description="Current password of the employee")
     request: Request
 
     class Config:
         arbitrary_types_allowed = True
-

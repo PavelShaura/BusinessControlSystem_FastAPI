@@ -1,7 +1,10 @@
 from fastapi import HTTPException
 
 from src.api.v1.auth.utils.password_utils import validate_password
-from src.schemas.employee_schemas import UpdateEmployeeDataRequest, EmployeeMessageResponse
+from src.schemas.employee_schemas import (
+    UpdateEmployeeDataRequest,
+    EmployeeMessageResponse,
+)
 from src.services.base_service import BaseService
 
 
@@ -31,5 +34,6 @@ class UpdateEmployeeDataService(BaseService):
             await uow.user_repository.update(employee)
             await uow.commit()
 
-        return EmployeeMessageResponse(message="Employee data updated successfully").model_dump()
-
+        return EmployeeMessageResponse(
+            message="Employee data updated successfully"
+        ).model_dump()

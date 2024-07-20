@@ -33,6 +33,5 @@ class GenerateURLEmployeeInviteService(BaseService):
             await send_initial_invite_email(employee.email, invite_url)
 
             return GenerateURLEmployeeInviteResponse(
-                message="Invite sent successfully",
-                invite_url=invite_url
+                message="Invite sent successfully", invite_url=invite_url
             ).model_dump()

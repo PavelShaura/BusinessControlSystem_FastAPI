@@ -31,4 +31,6 @@ class ConfirmRebindEmailService(BaseService):
             await uow.user_repository.update(employee)
             await uow.commit()
 
-        return EmployeeMessageResponse(message="Email successfully rebound").model_dump()
+        return EmployeeMessageResponse(
+            message="Email successfully rebound"
+        ).model_dump()

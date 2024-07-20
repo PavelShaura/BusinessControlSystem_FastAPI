@@ -24,4 +24,6 @@ class SignUpService(BaseService):
             # Добавление задачи для отправки письма в фоне
             background_tasks.add_task(send_invite_email, email, invite_token)
 
-            return SignUpResponse(message="Verification email sent", email=email).model_dump()
+            return SignUpResponse(
+                message="Verification email sent", email=email
+            ).model_dump()
