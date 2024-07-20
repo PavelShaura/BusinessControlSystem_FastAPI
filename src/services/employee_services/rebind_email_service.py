@@ -1,16 +1,20 @@
+import jwt
+
 from fastapi import HTTPException
+
 from src.api.v1.auth.utils.password_utils import validate_password
 from src.api.v1.company.utils.email_utils import send_rebind_email
 from src.core.config import settings
 from src.services.base_service import BaseService
-import jwt
+from src.schemas.employee_schemas import RebindEmailRequest, RebindEmailResponse
 
 
 class RebindEmailService(BaseService):
     async def execute(self, uow, **kwargs):
-        request = kwargs.get("request")
-        new_email = kwargs.get("new_email")
-        current_password = kwargs.get("current_password")
+        request_data = RebindEmailRequest(**kwargs)
+        new_email = request_data.new_email
+        current_password = request_data.current_password
+        request = request_data.request
 
         user_id = request.state.user.id
 
@@ -40,7 +44,6 @@ class RebindEmailService(BaseService):
 
             await send_rebind_email(new_email, rebind_url)
 
-            return {
-                "message": "Rebind email sent successfully",
-                "rebind_url": rebind_url,
-            }
+            return RebindEmailResponse(
+                message="Rebind email sent successfully", rebind_url=rebind_url
+            ).model_dump()

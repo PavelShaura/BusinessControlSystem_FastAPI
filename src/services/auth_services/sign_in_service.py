@@ -5,13 +5,14 @@ from fastapi import HTTPException, status
 from src.services.base_service import BaseService
 from src.api.v1.auth.utils.jwt_utils import encode_jwt
 from src.api.v1.auth.utils.password_utils import validate_password
-from src.schemas.auth_schemas import TokenInfo
+from src.schemas.auth_schemas import TokenInfo, SignInRequest
 
 
 class SignInService(BaseService):
     async def execute(self, uow, **kwargs) -> TokenInfo:
-        email = kwargs.get("email")
-        password = kwargs.get("password")
+        sign_in_request = SignInRequest(**kwargs)
+        email = sign_in_request.email
+        password = sign_in_request.password
 
         user = await self._validate_auth_user(email, password, uow)
 

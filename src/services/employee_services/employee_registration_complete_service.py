@@ -4,18 +4,25 @@ from fastapi import HTTPException
 
 from src.api.v1.auth.utils.password_utils import hash_password
 from src.core.config import settings
-from src.schemas.employee_schemas import EmployeeRegistrationCompleteSchema
+from src.schemas.employee_schemas import (
+    EmployeeRegistrationCompleteSchema,
+    EmployeeRegistrationCompleteRequest,
+    EmployeeRegistrationCompleteResponse,
+    EmployeeDataResponse,
+)
 from src.services.base_service import BaseService
 
 
 class EmployeeRegistrationCompleteService(BaseService):
     async def execute(self, uow, **kwargs):
-        password = kwargs.get("password")
-        password_confirm = kwargs.get("password_confirm")
-        token = kwargs.get("token")
+        request_data = EmployeeRegistrationCompleteRequest(**kwargs)
+        password = request_data.password
+        password_confirm = request_data.password_confirm
+        token = request_data.token
 
         if password != password_confirm:
             raise HTTPException(status_code=400, detail="Passwords do not match")
+
         try:
             payload = jwt.decode(
                 token,
@@ -46,14 +53,15 @@ class EmployeeRegistrationCompleteService(BaseService):
             await uow.user_repository.update(employee)
             await uow.commit()
 
-        return {
-            "message": "Employee registration completed successfully",
-            "data": {
-                "email": employee.email,
-                "first_name": employee.first_name,
-                "last_name": employee.last_name,
-                "is_admin": employee.is_admin,
-                "is_active": employee.is_active,
-                "company_id": employee.company_id,
-            },
-        }
+        response_data = EmployeeDataResponse(
+            email=employee.email,
+            first_name=employee.first_name,
+            last_name=employee.last_name,
+            is_admin=employee.is_admin,
+            is_active=employee.is_active,
+            company_id=employee.company_id,
+        )
+
+        return EmployeeRegistrationCompleteResponse(
+            message="Employee registration completed successfully", data=response_data
+        ).model_dump()

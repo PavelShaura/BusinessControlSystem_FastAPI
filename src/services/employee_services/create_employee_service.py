@@ -1,13 +1,11 @@
 from fastapi import HTTPException
 
 from src.services.base_service import BaseService
+from src.schemas.employee_schemas import CreateEmployeeRequest, EmployeeResponse
 
 
 class CreateEmployeeService(BaseService):
-    async def execute(self, uow, **kwargs):
-        employee_data = kwargs.get("employee_data")
-        request = kwargs.get("request")
-
+    async def execute(self, uow, employee_data: CreateEmployeeRequest, request):
         is_admin = request.state.is_admin
         company_id = request.state.user.company_id
 
@@ -30,4 +28,11 @@ class CreateEmployeeService(BaseService):
             )
             await uow.commit()
 
-        return new_employee
+        return EmployeeResponse(
+            id=new_employee.id,
+            email=new_employee.email,
+            first_name=new_employee.first_name,
+            last_name=new_employee.last_name,
+            company_id=new_employee.company_id,
+            is_active=new_employee.is_active,
+        ).model_dump()

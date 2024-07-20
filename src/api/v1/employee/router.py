@@ -2,14 +2,16 @@ from fastapi import APIRouter, Depends, Request, Form
 
 from src.services import employee_services
 from src.utils.unit_of_work import UnitOfWork, get_uow
-from src.schemas.employee_schemas import EmployeeCreate
+from src.schemas.employee_schemas import CreateEmployeeRequest, EmployeeResponse
 
 router = APIRouter(tags=["employees"])
 
 
-@router.post("/api/v1/employees/create")
+@router.post("/api/v1/employees/create", response_model=EmployeeResponse)
 async def create_employee(
-    employee_data: EmployeeCreate, request: Request, uow: UnitOfWork = Depends(get_uow)
+    employee_data: CreateEmployeeRequest,
+    request: Request,
+    uow: UnitOfWork = Depends(get_uow),
 ):
     return await employee_services.CreateEmployeeService()(
         uow, employee_data=employee_data, request=request
