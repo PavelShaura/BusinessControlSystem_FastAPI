@@ -5,10 +5,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.utils import get_openapi
 
+from src.middleware.auth_middleware import auth_middleware
 from src.api.v1.auth.router import router as auth_router
 from src.api.v1.company.router import router as company_router
 from src.api.v1.employee.router import router as employee_router
-from src.middleware.auth_middleware import auth_middleware
+from src.api.v1.department.router import router as department_router
+from src.api.v1.position.router import router as position_router
+from src.api.v1.user.router import router as user_router
 
 
 @asynccontextmanager
@@ -23,6 +26,9 @@ app = FastAPI(lifespan=lifespan, title="BCS_APP")
 app.include_router(auth_router)
 app.include_router(company_router)
 app.include_router(employee_router)
+app.include_router(department_router)
+app.include_router(position_router)
+app.include_router(user_router)
 
 app.middleware("http")(auth_middleware)
 

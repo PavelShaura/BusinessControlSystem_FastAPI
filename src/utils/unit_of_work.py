@@ -3,9 +3,10 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.v1.user.repository import UserRepository
-from src.core.database import async_session_maker
 from src.api.v1.company.repository import CompanyRepository
-from src.utils.repository import AbstractRepository
+from src.api.v1.department.repository import DepartmentRepository
+from src.api.v1.position.repository import PositionRepository
+from src.core.database import async_session_maker
 
 
 class UnitOfWork:
@@ -14,8 +15,10 @@ class UnitOfWork:
 
     async def __aenter__(self):
         self.session: AsyncSession = self.session_factory()
-        self.user_repository: AbstractRepository() = UserRepository(self.session)
-        self.company_repository: AbstractRepository() = CompanyRepository(self.session)
+        self.user_repository = UserRepository(self.session)
+        self.company_repository = CompanyRepository(self.session)
+        self.department_repository = DepartmentRepository(self.session)
+        self.position_repository = PositionRepository(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):

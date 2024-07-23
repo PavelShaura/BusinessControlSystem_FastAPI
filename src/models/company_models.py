@@ -9,4 +9,7 @@ class Company(BaseModel):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
+
     employees = relationship("User", back_populates="company")
+    departments = relationship("Department", back_populates="company")
+    positions = relationship("Position", back_populates="company")
