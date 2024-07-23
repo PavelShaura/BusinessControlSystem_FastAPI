@@ -14,6 +14,10 @@ sys.path.append(os.path.join(sys.path[0], "src"))
 
 from src.core.database import Base
 from src.core.config import settings
+from src.models.position_models import Position
+from src.models.department_models import Department
+from src.models.user_models import User
+from src.models.company_models import Company
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

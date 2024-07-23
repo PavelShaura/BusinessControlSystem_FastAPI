@@ -3,6 +3,8 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 from fastapi import Request
 
+from src.schemas.base_schemas import MessageResponse
+
 
 class CreateEmployeeRequest(BaseModel):
     email: EmailStr
@@ -29,8 +31,8 @@ class TokenSchema(BaseModel):
     token: str
 
 
-class EmployeeMessageResponse(BaseModel):
-    message: str
+class EmployeeMessageResponse(MessageResponse):
+    pass
 
 
 class EmployeeRegistrationCompleteRequest(BaseModel):
