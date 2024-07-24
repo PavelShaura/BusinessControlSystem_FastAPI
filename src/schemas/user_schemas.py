@@ -7,7 +7,7 @@ class UserUpdate(BaseModel):
     position_id: Optional[int]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserResponse(BaseModel):
@@ -23,4 +23,4 @@ class UserResponse(BaseModel):
     position_id: Optional[int]
 
     class Config:
-        orm_mode = True
+        from_attributes = True

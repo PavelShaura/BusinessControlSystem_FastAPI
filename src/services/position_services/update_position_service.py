@@ -12,10 +12,10 @@ class UpdatePositionService(BaseService):
                 raise ValueError("Position not found")
 
             await uow.position_repository.update(
-                position_id, **position_data.dict(exclude_unset=True)
+                position_id, **position_data.model_dump(exclude_unset=True)
             )
             await uow.commit()
 
             updated_position = await uow.position_repository.get_by_id(position_id)
 
-        return PositionResponse.from_orm(updated_position)
+        return PositionResponse.model_validate(updated_position)

@@ -9,7 +9,7 @@ class AssignManager(BaseModel):
     manager_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class DepartmentMessageResponse(MessageResponse):
@@ -37,4 +37,4 @@ class DepartmentResponse(DepartmentBase):
     children: Optional[List["DepartmentResponse"]] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True

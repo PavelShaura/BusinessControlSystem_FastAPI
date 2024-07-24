@@ -12,4 +12,4 @@ class CreatePositionService(BaseService):
             )
             await uow.commit()
 
-        return PositionResponse.from_orm(new_position)
+        return PositionResponse.model_validate(new_position)

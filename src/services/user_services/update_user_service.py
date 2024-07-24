@@ -27,4 +27,4 @@ class UpdateUserService(BaseService):
             await uow.user_repository.update(user)
             await uow.commit()
 
-            return UserResponse.from_orm(user)
+            return UserResponse.model_validate(user)
