@@ -22,4 +22,4 @@ class CreateDepartmentService(BaseService):
             )
             await uow.commit()
 
-        return DepartmentResponse.from_orm(new_department)
+        return DepartmentResponse.model_validate(new_department)

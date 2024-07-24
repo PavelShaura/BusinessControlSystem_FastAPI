@@ -7,7 +7,7 @@ from src.schemas.department_schemas import (
     AssignManager,
 )
 from src.services import department_services
-from src.services.department_services.assign_manager_service import AssignManagerService
+from src.services.department_services import AssignManagerService
 from src.utils.unit_of_work import UnitOfWork, get_uow
 
 router = APIRouter(tags=["departments"])

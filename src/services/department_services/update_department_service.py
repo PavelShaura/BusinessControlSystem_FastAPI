@@ -20,4 +20,4 @@ class UpdateDepartmentService(BaseService):
                 department_id
             )
 
-        return DepartmentResponse.from_orm(updated_department)
+        return DepartmentResponse.model_validate(updated_department)
