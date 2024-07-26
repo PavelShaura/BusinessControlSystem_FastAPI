@@ -30,7 +30,7 @@ class DepartmentBase(BaseModel):
 class DepartmentCreate(BaseModel):
     name: str
     company_id: int
-    parent: Optional[int] = None
+    parent_id: Optional[int] = None
 
     class Config:
         from_attributes = True

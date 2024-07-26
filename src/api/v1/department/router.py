@@ -32,8 +32,7 @@ async def assign_manager(
 async def create_department(
     department_data: DepartmentCreate, uow: UnitOfWork = Depends(get_uow)
 ):
-
-    return await department_services.CreateDepartmentService()(
+    return await department_services.CreateDepartmentService().execute(
         uow, **department_data.model_dump()
     )
 
