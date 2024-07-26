@@ -9,29 +9,32 @@ from src.services.base_service import BaseService
 
 
 class GenerateURLEmployeeInviteService(BaseService):
-    async def execute(self, uow, **kwargs):
-        employee_id = kwargs.get("employee_id")
-        request = kwargs.get("request")
+    try:
+        async def execute(self, uow, **kwargs):
+            employee_id = kwargs.get("employee_id")
+            request = kwargs.get("request")
 
-        async with uow:
-            employee = await uow.user_repository.get_by_id(employee_id)
-            if not employee:
-                raise HTTPException(status_code=404, detail="Employee not found")
+            async with uow:
+                employee = await uow.user_repository.get_by_id(employee_id)
+                if not employee:
+                    raise HTTPException(status_code=404, detail="Employee not found")
 
-            invite_token = jwt.encode(
-                {
-                    "employee_id": employee.id,
-                    "email": employee.email,
-                    "company_id": employee.company_id,
-                },
-                settings.auth_jwt.private_key_path.read_text(),
-                algorithm=settings.auth_jwt.algorithm,
-            )
+                invite_token = jwt.encode(
+                    {
+                        "employee_id": employee.id,
+                        "email": employee.email,
+                        "company_id": employee.company_id,
+                    },
+                    settings.auth_jwt.private_key_path.read_text(),
+                    algorithm=settings.auth_jwt.algorithm,
+                )
 
-            invite_url = f"{request.base_url}api/v1/employees/registration-complete?token={invite_token}"
+                invite_url = f"{request.base_url}api/v1/employees/registration-complete?token={invite_token}"
 
-            await send_initial_invite_email(employee.email, invite_url)
+                await send_initial_invite_email(employee.email, invite_url)
 
-            return GenerateURLEmployeeInviteResponse(
-                message="Invite sent successfully", invite_url=invite_url
-            ).model_dump()
+                return GenerateURLEmployeeInviteResponse(
+                    message="Invite sent successfully", invite_url=invite_url
+                ).model_dump()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

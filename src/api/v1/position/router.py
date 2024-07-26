@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from src.schemas.position_schemas import (
     PositionCreate,
@@ -15,29 +15,22 @@ router = APIRouter(tags=["positions"])
 async def create_position(
     position_data: PositionCreate, uow: UnitOfWork = Depends(get_uow)
 ):
-    try:
-        return await position_services.CreatePositionService()(
-            uow, **position_data.dict()
+    return await position_services.CreatePositionService()(
+            uow, **position_data.model_dump()
         )
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+
 
 
 @router.put("/api/v1/positions/{position_id}", response_model=PositionResponse)
 async def update_position(
     position_id: int, position_data: PositionUpdate, uow: UnitOfWork = Depends(get_uow)
 ):
-    try:
-        return await position_services.UpdatePositionService()(
+    return await position_services.UpdatePositionService()(
             uow, position_id, **position_data.dict(exclude_unset=True)
         )
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.delete("/api/v1/positions/{position_id}")
 async def delete_position(position_id: int, uow: UnitOfWork = Depends(get_uow)):
-    try:
-        return await position_services.DeletePositionService()(uow, position_id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return await position_services.DeletePositionService()(uow, position_id)
+
