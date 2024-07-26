@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from sqlalchemy.orm import aliased
+
 from src.models.department_models import Department
 
 

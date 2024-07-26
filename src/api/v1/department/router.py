@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 
 from src.api.v1.department.utils.show_department_hierarchy import (
     show_department_hierarchy,
