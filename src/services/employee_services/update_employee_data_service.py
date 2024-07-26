@@ -1,11 +1,15 @@
 from fastapi import HTTPException
 from src.api.v1.auth.utils.password_utils import validate_password
-from src.schemas.employee_schemas import UpdateEmployeeDataRequest, EmployeeMessageResponse
+from src.schemas.employee_schemas import (
+    UpdateEmployeeDataRequest,
+    EmployeeMessageResponse,
+)
 from src.services.base_service import BaseService
 
 
 class UpdateEmployeeDataService(BaseService):
     try:
+
         async def execute(self, uow, **kwargs):
             request_data = UpdateEmployeeDataRequest(**kwargs)
             first_name = request_data.first_name
@@ -35,5 +39,6 @@ class UpdateEmployeeDataService(BaseService):
             return EmployeeMessageResponse(
                 message="Employee data updated successfully"
             ).model_dump()
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

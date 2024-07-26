@@ -11,6 +11,7 @@ from src.schemas.employee_schemas import RebindEmailRequest, RebindEmailResponse
 
 class RebindEmailService(BaseService):
     try:
+
         async def execute(self, uow, **kwargs):
             request_data = RebindEmailRequest(**kwargs)
             new_email = request_data.new_email
@@ -48,5 +49,6 @@ class RebindEmailService(BaseService):
                 return RebindEmailResponse(
                     message="Rebind email sent successfully", rebind_url=rebind_url
                 ).model_dump()
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

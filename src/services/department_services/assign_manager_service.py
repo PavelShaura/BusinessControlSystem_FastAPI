@@ -6,6 +6,7 @@ from src.schemas.department_schemas import DepartmentResponse, ManagerInfo
 
 class AssignManagerService(BaseService):
     try:
+
         async def execute(self, uow, department_id: int, manager_id: int):
             async with uow:
                 department = await uow.department_repository.get_by_id(department_id)
@@ -21,7 +22,9 @@ class AssignManagerService(BaseService):
                         "Manager and department must belong to the same company"
                     )
 
-                await uow.department_repository.assign_manager(department_id, manager_id)
+                await uow.department_repository.assign_manager(
+                    department_id, manager_id
+                )
                 await uow.commit()
 
                 manager_info = ManagerInfo(
@@ -35,5 +38,6 @@ class AssignManagerService(BaseService):
                     manager_info=manager_info,
                 )
             return department_response
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -14,11 +14,12 @@ from src.utils.unit_of_work import UnitOfWork, get_uow
 
 router = APIRouter(tags=["employees"])
 
+
 @router.post("/api/v1/employees/create", response_model=EmployeeResponse)
 async def create_employee(
     employee_data: CreateEmployeeRequest,
     request: Request,
-    uow: UnitOfWork = Depends(get_uow)
+    uow: UnitOfWork = Depends(get_uow),
 ):
     return await employee_services.CreateEmployeeService().execute(
         uow, employee_data=employee_data, request=request
@@ -57,7 +58,7 @@ async def update_employee_data(
     last_name: str = Form(None),
     position_id: int = Form(None),
     current_password: str = Form(...),
-    uow: UnitOfWork = Depends(get_uow)
+    uow: UnitOfWork = Depends(get_uow),
 ):
     return await employee_services.UpdateEmployeeDataService().execute(
         uow,
@@ -65,7 +66,7 @@ async def update_employee_data(
         first_name=first_name,
         last_name=last_name,
         position_id=position_id,
-        current_password=current_password
+        current_password=current_password,
     )
 
 
