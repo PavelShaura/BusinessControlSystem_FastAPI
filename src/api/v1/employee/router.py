@@ -1,12 +1,3 @@
-from fastapi import APIRouter, Depends, Request, Form
-
-from src.services import employee_services
-from src.utils.unit_of_work import UnitOfWork, get_uow
-from src.schemas.employee_schemas import CreateEmployeeRequest, EmployeeResponse
-
-router = APIRouter(tags=["employees"])
-
-
 from fastapi import APIRouter, Depends, Request
 from src.schemas.employee_schemas import CreateEmployeeRequest, EmployeeResponse
 from src.services import employee_services
