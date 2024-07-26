@@ -14,54 +14,57 @@ from src.services.base_service import BaseService
 
 
 class EmployeeRegistrationCompleteService(BaseService):
-    async def execute(self, uow, **kwargs):
-        request_data = EmployeeRegistrationCompleteRequest(**kwargs)
-        password = request_data.password
-        password_confirm = request_data.password_confirm
-        token = request_data.token
+    try:
+        async def execute(self, uow, **kwargs):
+            request_data = EmployeeRegistrationCompleteRequest(**kwargs)
+            password = request_data.password
+            password_confirm = request_data.password_confirm
+            token = request_data.token
 
-        if password != password_confirm:
-            raise HTTPException(status_code=400, detail="Passwords do not match")
+            if password != password_confirm:
+                raise HTTPException(status_code=400, detail="Passwords do not match")
 
-        try:
-            payload = jwt.decode(
-                token,
-                settings.auth_jwt.public_key_path.read_text(),
-                algorithms=[settings.auth_jwt.algorithm],
+            try:
+                payload = jwt.decode(
+                    token,
+                    settings.auth_jwt.public_key_path.read_text(),
+                    algorithms=[settings.auth_jwt.algorithm],
+                )
+                employee_id = payload["employee_id"]
+                email = payload["email"]
+            except jwt.PyJWTError:
+                raise HTTPException(status_code=400, detail="Invalid token")
+
+            employee_data = EmployeeRegistrationCompleteSchema(
+                employee_id=employee_id, email=email, password=password
             )
-            employee_id = payload["employee_id"]
-            email = payload["email"]
-        except jwt.PyJWTError:
-            raise HTTPException(status_code=400, detail="Invalid token")
 
-        employee_data = EmployeeRegistrationCompleteSchema(
-            employee_id=employee_id, email=email, password=password
-        )
+            async with uow:
+                employee = await uow.user_repository.get_by_id(employee_data.employee_id)
+                if not employee:
+                    return {"error": "Employee not found"}
 
-        async with uow:
-            employee = await uow.user_repository.get_by_id(employee_data.employee_id)
-            if not employee:
-                return {"error": "Employee not found"}
+                if employee.email != employee_data.email:
+                    return {"error": "Invalid employee data"}
 
-            if employee.email != employee_data.email:
-                return {"error": "Invalid employee data"}
+                hashed_password = hash_password(employee_data.password)
+                employee.hashed_password = hashed_password
+                employee.is_active = True
 
-            hashed_password = hash_password(employee_data.password)
-            employee.hashed_password = hashed_password
-            employee.is_active = True
+                await uow.user_repository.update(employee)
+                await uow.commit()
 
-            await uow.user_repository.update(employee)
-            await uow.commit()
+            response_data = EmployeeDataResponse(
+                email=employee.email,
+                first_name=employee.first_name,
+                last_name=employee.last_name,
+                is_admin=employee.is_admin,
+                is_active=employee.is_active,
+                company_id=employee.company_id,
+            )
 
-        response_data = EmployeeDataResponse(
-            email=employee.email,
-            first_name=employee.first_name,
-            last_name=employee.last_name,
-            is_admin=employee.is_admin,
-            is_active=employee.is_active,
-            company_id=employee.company_id,
-        )
-
-        return EmployeeRegistrationCompleteResponse(
-            message="Employee registration completed successfully", data=response_data
-        ).model_dump()
+            return EmployeeRegistrationCompleteResponse(
+                message="Employee registration completed successfully", data=response_data
+            ).model_dump()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

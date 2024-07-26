@@ -2,8 +2,9 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from src.models.base_model import BaseModel
 
+
 class User(BaseModel):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
@@ -18,5 +19,7 @@ class User(BaseModel):
     position_id = Column(Integer, ForeignKey("positions.id", deferrable=True))
 
     company = relationship("Company", back_populates="employees")
-    department = relationship("Department", back_populates="employees", foreign_keys=[department_id])
+    department = relationship(
+        "Department", back_populates="employees", foreign_keys=[department_id]
+    )
     position = relationship("Position", back_populates="employees")

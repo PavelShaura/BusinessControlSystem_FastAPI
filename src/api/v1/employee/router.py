@@ -7,13 +7,20 @@ from src.schemas.employee_schemas import CreateEmployeeRequest, EmployeeResponse
 router = APIRouter(tags=["employees"])
 
 
+from fastapi import APIRouter, Depends, Request
+from src.schemas.employee_schemas import CreateEmployeeRequest, EmployeeResponse
+from src.services import employee_services
+from src.utils.unit_of_work import UnitOfWork, get_uow
+
+router = APIRouter(tags=["employees"])
+
 @router.post("/api/v1/employees/create", response_model=EmployeeResponse)
 async def create_employee(
     employee_data: CreateEmployeeRequest,
     request: Request,
-    uow: UnitOfWork = Depends(get_uow),
+    uow: UnitOfWork = Depends(get_uow)
 ):
-    return await employee_services.CreateEmployeeService()(
+    return await employee_services.CreateEmployeeService().execute(
         uow, employee_data=employee_data, request=request
     )
 
@@ -44,20 +51,21 @@ async def complete_employee_registration(
     )
 
 
-@router.patch("/api/v1/employees/update-data")
 async def update_employee_data(
     request: Request,
     first_name: str = Form(None),
     last_name: str = Form(None),
+    position_id: int = Form(None),
     current_password: str = Form(...),
-    uow: UnitOfWork = Depends(get_uow),
+    uow: UnitOfWork = Depends(get_uow)
 ):
-    return await employee_services.UpdateEmployeeDataService()(
+    return await employee_services.UpdateEmployeeDataService().execute(
         uow,
         request=request,
         first_name=first_name,
         last_name=last_name,
-        current_password=current_password,
+        position_id=position_id,
+        current_password=current_password
     )
 
 

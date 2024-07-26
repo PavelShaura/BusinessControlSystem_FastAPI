@@ -1,5 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 
+from src.api.v1.department.utils.show_department_hierarchy import (
+    show_department_hierarchy,
+)
 from src.schemas.department_schemas import (
     DepartmentCreate,
     DepartmentUpdate,
@@ -20,25 +23,19 @@ router = APIRouter(tags=["departments"])
 async def assign_manager(
     department_id: int, assign_data: AssignManager, uow: UnitOfWork = Depends(get_uow)
 ):
-    try:
-        department = await AssignManagerService().execute(
-            uow, department_id, assign_data.manager_id
-        )
-        return department
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return await AssignManagerService().execute(
+        uow, department_id, assign_data.manager_id
+    )
 
 
 @router.post("/api/v1/departments", response_model=DepartmentResponse)
 async def create_department(
     department_data: DepartmentCreate, uow: UnitOfWork = Depends(get_uow)
 ):
-    try:
-        return await department_services.CreateDepartmentService()(
-            uow, **department_data.dict()
-        )
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+
+    return await department_services.CreateDepartmentService()(
+        uow, **department_data.model_dump()
+    )
 
 
 @router.put("/api/v1/departments/{department_id}", response_model=DepartmentResponse)
@@ -47,17 +44,18 @@ async def update_department(
     department_data: DepartmentUpdate,
     uow: UnitOfWork = Depends(get_uow),
 ):
-    try:
-        return await department_services.UpdateDepartmentService()(
-            uow, department_id, **department_data.dict(exclude_unset=True)
-        )
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+
+    return await department_services.UpdateDepartmentService()(
+        uow, department_id, **department_data.model_dump(exclude_unset=True)
+    )
 
 
 @router.delete("/api/v1/departments/{department_id}")
 async def delete_department(department_id: int, uow: UnitOfWork = Depends(get_uow)):
-    try:
-        return await department_services.DeleteDepartmentService()(uow, department_id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return await department_services.DeleteDepartmentService()(uow, department_id)
+
+
+@router.get("/api/v1/departments/hierarchy")
+async def get_department_hierarchy(uow: UnitOfWork = Depends(get_uow)):
+    await show_department_hierarchy(uow)
+    return {"message": "Department hierarchy printed to console"}
