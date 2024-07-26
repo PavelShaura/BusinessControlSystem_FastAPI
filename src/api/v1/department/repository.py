@@ -32,7 +32,7 @@ class DepartmentRepository(SqlAlchemyRepository):
         await self.session.flush()
         return new_department
 
-    async def get_by_id(self, department_id: int):
+    async def get_by_id(self, department_id: int) -> Department:
         query = select(self.model).where(self.model.id == department_id)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
