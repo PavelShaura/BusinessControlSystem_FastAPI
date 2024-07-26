@@ -10,6 +10,7 @@ from src.services.base_service import BaseService
 
 class GenerateURLEmployeeInviteService(BaseService):
     try:
+
         async def execute(self, uow, **kwargs):
             employee_id = kwargs.get("employee_id")
             request = kwargs.get("request")
@@ -36,5 +37,6 @@ class GenerateURLEmployeeInviteService(BaseService):
                 return GenerateURLEmployeeInviteResponse(
                     message="Invite sent successfully", invite_url=invite_url
                 ).model_dump()
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

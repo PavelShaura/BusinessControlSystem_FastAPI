@@ -6,6 +6,7 @@ from src.schemas.department_schemas import DepartmentMessageResponse
 
 class DeleteDepartmentService(BaseService):
     try:
+
         async def execute(self, uow, department_id: int):
             async with uow:
                 department = await uow.department_repository.get_by_id(department_id)
@@ -16,5 +17,6 @@ class DeleteDepartmentService(BaseService):
                 await uow.commit()
 
             return DepartmentMessageResponse(message="Department deleted successfully")
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

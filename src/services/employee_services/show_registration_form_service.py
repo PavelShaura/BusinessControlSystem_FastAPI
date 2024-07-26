@@ -10,6 +10,7 @@ from src.services.base_service import BaseService
 
 class ShowRegistrationFormService(BaseService):
     try:
+
         async def execute(self, uow, **kwargs) -> HTMLResponse:
             token_request = TokenSchema(**kwargs)
             token = token_request.token
@@ -23,7 +24,9 @@ class ShowRegistrationFormService(BaseService):
                 async with uow:
                     employee = await uow.user_repository.get_by_email(email)
                     if not employee:
-                        raise HTTPException(status_code=404, detail="Employee not found")
+                        raise HTTPException(
+                            status_code=404, detail="Employee not found"
+                        )
                     if employee.is_active:
                         raise HTTPException(
                             status_code=400, detail="Employee already registered"
@@ -41,5 +44,6 @@ class ShowRegistrationFormService(BaseService):
             </form>
             """
             return HTMLResponse(content=html_content)
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

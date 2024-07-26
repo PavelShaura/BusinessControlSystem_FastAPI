@@ -15,6 +15,7 @@ from src.services.base_service import BaseService
 
 class EmployeeRegistrationCompleteService(BaseService):
     try:
+
         async def execute(self, uow, **kwargs):
             request_data = EmployeeRegistrationCompleteRequest(**kwargs)
             password = request_data.password
@@ -40,7 +41,9 @@ class EmployeeRegistrationCompleteService(BaseService):
             )
 
             async with uow:
-                employee = await uow.user_repository.get_by_id(employee_data.employee_id)
+                employee = await uow.user_repository.get_by_id(
+                    employee_data.employee_id
+                )
                 if not employee:
                     return {"error": "Employee not found"}
 
@@ -64,7 +67,9 @@ class EmployeeRegistrationCompleteService(BaseService):
             )
 
             return EmployeeRegistrationCompleteResponse(
-                message="Employee registration completed successfully", data=response_data
+                message="Employee registration completed successfully",
+                data=response_data,
             ).model_dump()
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

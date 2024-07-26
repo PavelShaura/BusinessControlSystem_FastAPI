@@ -16,9 +16,8 @@ async def create_position(
     position_data: PositionCreate, uow: UnitOfWork = Depends(get_uow)
 ):
     return await position_services.CreatePositionService()(
-            uow, **position_data.model_dump()
-        )
-
+        uow, **position_data.model_dump()
+    )
 
 
 @router.put("/api/v1/positions/{position_id}", response_model=PositionResponse)
@@ -26,11 +25,10 @@ async def update_position(
     position_id: int, position_data: PositionUpdate, uow: UnitOfWork = Depends(get_uow)
 ):
     return await position_services.UpdatePositionService()(
-            uow, position_id, **position_data.dict(exclude_unset=True)
-        )
+        uow, position_id, **position_data.dict(exclude_unset=True)
+    )
 
 
 @router.delete("/api/v1/positions/{position_id}")
 async def delete_position(position_id: int, uow: UnitOfWork = Depends(get_uow)):
     return await position_services.DeletePositionService()(uow, position_id)
-

@@ -76,9 +76,13 @@ class RebindEmailResponse(BaseModel):
 
 
 class UpdateEmployeeDataRequest(BaseModel):
-    first_name: Optional[str] = Field(None, description="New first name of the employee")
+    first_name: Optional[str] = Field(
+        None, description="New first name of the employee"
+    )
     last_name: Optional[str] = Field(None, description="New last name of the employee")
-    position_id: Optional[int] = Field(None, description="New position ID of the employee") 
+    position_id: Optional[int] = Field(
+        None, description="New position ID of the employee"
+    )
     current_password: str = Field(..., description="Current password of the employee")
     request: Request
 

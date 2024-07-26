@@ -6,6 +6,7 @@ from src.schemas.department_schemas import DepartmentCreate, DepartmentResponse
 
 class CreateDepartmentService(BaseService):
     try:
+
         async def execute(self, uow, **kwargs):
             department_data = DepartmentCreate(**kwargs)
 
@@ -16,5 +17,6 @@ class CreateDepartmentService(BaseService):
                 await uow.commit()
 
             return DepartmentResponse.model_validate(new_department)
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

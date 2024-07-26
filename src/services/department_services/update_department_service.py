@@ -6,6 +6,7 @@ from src.schemas.department_schemas import DepartmentUpdate, DepartmentResponse
 
 class UpdateDepartmentService(BaseService):
     try:
+
         async def execute(self, uow, department_id: int, **kwargs):
             department_data = DepartmentUpdate(**kwargs)
 
@@ -24,5 +25,6 @@ class UpdateDepartmentService(BaseService):
                 )
 
             return DepartmentResponse.model_validate(updated_department)
+
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
