@@ -1,6 +1,10 @@
 # docker run --name my_postgres_container -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=postgres -p 5432:5432 -d postgres
 # alembic revision --autogenerate -m 'initial'
 # alembic upgrade head
+#
+# docker rm -f $(docker ps -aq)
+# docker run -d --name redis_app -p 6379:6379 redis:7
+# docker exec -it my_postgres_container psql -U postgres -d postgres -c "CREATE EXTENSION IF NOT EXISTS ltree;"
 import os
 import sys
 
@@ -18,6 +22,7 @@ from src.models.position_models import Position
 from src.models.department_models import Department
 from src.models.user_models import User
 from src.models.company_models import Company
+from src.models.task_models import Task, TaskWatcher, TaskExecutor
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

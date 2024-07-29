@@ -12,6 +12,7 @@ from src.api.v1.employee.router import router as employee_router
 from src.api.v1.department.router import router as department_router
 from src.api.v1.position.router import router as position_router
 from src.api.v1.user.router import router as user_router
+from src.api.v1.task.router import router as task_router
 
 
 @asynccontextmanager
@@ -29,6 +30,7 @@ app.include_router(employee_router)
 app.include_router(department_router)
 app.include_router(position_router)
 app.include_router(user_router)
+app.include_router(task_router)
 
 app.middleware("http")(auth_middleware)
 

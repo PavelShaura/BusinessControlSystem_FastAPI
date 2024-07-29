@@ -49,7 +49,7 @@ async def auth_middleware(request: Request, call_next):
 
             if not user.is_active:
                 raise HTTPException(status_code=403, detail="User inactive")
-
+            request.state.user_id = user_id
             request.state.user = user
             request.state.is_admin = is_admin
             request.state.company_id = company_id
