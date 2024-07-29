@@ -7,6 +7,7 @@ from src.api.v1.company.repository import CompanyRepository
 from src.api.v1.department.repository import DepartmentRepository
 from src.api.v1.position.repository import PositionRepository
 from src.core.database import async_session_maker
+from src.api.v1.task.repository import TaskRepository
 
 
 class UnitOfWork:
@@ -19,6 +20,7 @@ class UnitOfWork:
         self.company_repository = CompanyRepository(self.session)
         self.department_repository = DepartmentRepository(self.session)
         self.position_repository = PositionRepository(self.session)
+        self.task_repository = TaskRepository(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
