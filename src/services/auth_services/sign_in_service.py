@@ -2,17 +2,13 @@ from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
 
-from src.services.base_service import BaseService
 from src.api.v1.auth.utils.jwt_utils import encode_jwt
 from src.api.v1.auth.utils.password_utils import validate_password
-from src.schemas.auth_schemas import TokenInfo, SignInRequest
+from src.schemas.auth_schemas import TokenInfo
 
 
-class SignInService(BaseService):
-    async def execute(self, uow, **kwargs) -> TokenInfo:
-        sign_in_request = SignInRequest(**kwargs)
-        email = sign_in_request.email
-        password = sign_in_request.password
+class SignInService:
+    async def sign_in(self, uow, email, password) -> TokenInfo:
 
         user = await self._validate_auth_user(email, password, uow)
 
