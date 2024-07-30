@@ -1,10 +1,9 @@
 from src.api.v1.auth.utils.password_utils import hash_password
-from src.services.base_service import BaseService
-from src.schemas.company_schemas import CompleteSignUpRequest, CompleteSignUpResponse
+from src.schemas.company_schemas import CompleteSignUpResponse
 
 
-class CompleteSignUpService(BaseService):
-    async def execute(self, uow, user_data: CompleteSignUpRequest):
+class CompleteSignUpService:
+    async def comlete_sign_up(self, uow, user_data):
         async with uow:
             existing_user = await uow.user_repository.get_by_email(user_data.account)
             if existing_user:
