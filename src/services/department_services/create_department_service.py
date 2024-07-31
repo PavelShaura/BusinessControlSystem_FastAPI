@@ -1,14 +1,12 @@
 from fastapi import HTTPException
 
-from src.services.base_service import BaseService
-from src.schemas.department_schemas import DepartmentCreate, DepartmentResponse
+from src.schemas.department_schemas import DepartmentResponse
 
 
-class CreateDepartmentService(BaseService):
-    try:
-
-        async def execute(self, uow, **kwargs) -> DepartmentResponse:
-            department_data = DepartmentCreate(**kwargs)
+class CreateDepartmentService:
+    @staticmethod
+    async def create_department(uow, department_data) -> DepartmentResponse:
+        try:
             async with uow:
                 new_department = await uow.department_repository.create(
                     name=department_data.name,
@@ -17,6 +15,5 @@ class CreateDepartmentService(BaseService):
                 )
                 await uow.commit()
             return DepartmentResponse.model_validate(new_department)
-
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))

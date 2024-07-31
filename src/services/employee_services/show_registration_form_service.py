@@ -4,37 +4,30 @@ from fastapi import HTTPException
 from fastapi.responses import HTMLResponse
 
 from src.core.config import settings
-from src.schemas.employee_schemas import TokenSchema
-from src.services.base_service import BaseService
 
 
-class ShowRegistrationFormService(BaseService):
-    try:
+class ShowRegistrationFormService:
+    @staticmethod
+    async def show_form(uow, token) -> HTMLResponse:
+        try:
+            payload = jwt.decode(
+                token,
+                settings.auth_jwt.public_key_path.read_text(),
+                algorithms=[settings.auth_jwt.algorithm],
+            )
+            email = payload["email"]
+            async with uow:
+                employee = await uow.user_repository.get_by_email(email)
+                if not employee:
+                    raise HTTPException(status_code=404, detail="Employee not found")
+                if employee.is_active:
+                    raise HTTPException(
+                        status_code=400, detail="Employee already registered"
+                    )
+        except jwt.PyJWTError:
+            raise HTTPException(status_code=400, detail="Invalid token")
 
-        async def execute(self, uow, **kwargs) -> HTMLResponse:
-            token_request = TokenSchema(**kwargs)
-            token = token_request.token
-            try:
-                payload = jwt.decode(
-                    token,
-                    settings.auth_jwt.public_key_path.read_text(),
-                    algorithms=[settings.auth_jwt.algorithm],
-                )
-                email = payload["email"]
-                async with uow:
-                    employee = await uow.user_repository.get_by_email(email)
-                    if not employee:
-                        raise HTTPException(
-                            status_code=404, detail="Employee not found"
-                        )
-                    if employee.is_active:
-                        raise HTTPException(
-                            status_code=400, detail="Employee already registered"
-                        )
-            except jwt.PyJWTError:
-                raise HTTPException(status_code=400, detail="Invalid token")
-
-            html_content = f"""
+        html_content = f"""
             <form method="post">
                 <input type="hidden" name="token" value="{token}">
                 <p>Email: {email}</p>
@@ -43,7 +36,4 @@ class ShowRegistrationFormService(BaseService):
                 <button type="submit">Complete Registration</button>
             </form>
             """
-            return HTMLResponse(content=html_content)
-
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        return HTMLResponse(content=html_content)

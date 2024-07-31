@@ -1,16 +1,14 @@
 import jwt
 
 from fastapi import HTTPException
-from src.services.base_service import BaseService
+
 from src.core.config import settings
-from src.schemas.employee_schemas import TokenSchema, EmployeeMessageResponse
+from src.schemas.employee_schemas import EmployeeMessageResponse
 
 
-class ConfirmRebindEmailService(BaseService):
-    async def execute(self, uow, **kwargs):
-        confirm_rebind_email_request = TokenSchema(**kwargs)
-        token = confirm_rebind_email_request.token
-
+class ConfirmRebindEmailService:
+    @staticmethod
+    async def confirm_rebind_email(uow, token):
         try:
             payload = jwt.decode(
                 token,

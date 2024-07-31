@@ -1,13 +1,12 @@
 from fastapi import HTTPException
 
-from src.services.base_service import BaseService
 from src.schemas.employee_schemas import CreateEmployeeRequest, EmployeeResponse
 
 
-class CreateEmployeeService(BaseService):
-    try:
-
-        async def execute(self, uow, employee_data: CreateEmployeeRequest, request):
+class CreateEmployeeService:
+    @staticmethod
+    async def create_employee(uow, employee_data: CreateEmployeeRequest, request):
+        try:
             is_admin = request.state.is_admin
             company_id = request.state.user.company_id
             if not is_admin:
@@ -41,6 +40,5 @@ class CreateEmployeeService(BaseService):
                 is_active=new_employee.is_active,
                 position_id=new_employee.position_id,
             ).model_dump()
-
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))

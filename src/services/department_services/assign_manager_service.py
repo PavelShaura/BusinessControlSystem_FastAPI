@@ -1,13 +1,12 @@
 from fastapi import HTTPException
 
-from src.services.base_service import BaseService
 from src.schemas.department_schemas import DepartmentResponse, ManagerInfo
 
 
-class AssignManagerService(BaseService):
-    try:
-
-        async def execute(self, uow, department_id: int, manager_id: int):
+class AssignManagerService:
+    @staticmethod
+    async def assign(uow, department_id: int, manager_id: int):
+        try:
             async with uow:
                 department = await uow.department_repository.get_by_id(department_id)
                 if not department:
@@ -38,6 +37,5 @@ class AssignManagerService(BaseService):
                     manager_info=manager_info,
                 )
             return department_response
-
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
