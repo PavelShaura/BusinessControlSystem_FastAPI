@@ -51,7 +51,6 @@ async def show_registration_form(
     return await show_registration_form_service.show_form(uow, token)
 
 
-
 @router.post("/api/v1/employees/registration-complete")
 async def complete_employee_registration(
     token: str = Form(...),
@@ -62,7 +61,9 @@ async def complete_employee_registration(
         employee_services.EmployeeRegistrationCompleteService
     ),
 ):
-    form_data = EmployeeRegistrationCompleteRequest(token=token, password=password, password_confirm=password_confirm)
+    form_data = EmployeeRegistrationCompleteRequest(
+        token=token, password=password, password_confirm=password_confirm
+    )
     return await complete_employee_registration_service.complete_registration(
         uow, form_data.token, form_data.password, form_data.password_confirm
     )
@@ -82,19 +83,20 @@ async def update_employee_data(
 
 @router.post("/api/v1/employees/rebind-email")
 async def rebind_email(
-    rebind_data: RebindEmailRequest,
     request: Request,
+    new_email: str = Form(...),
+    current_password: str = Form(...),
     uow: UnitOfWork = Depends(get_uow),
     rebind_email_service: employee_services.RebindEmailService = Depends(
         employee_services.RebindEmailService
     ),
 ):
-    return await rebind_email_service.rebind_email(uow, rebind_data, request)
+    return await rebind_email_service.rebind_email(uow, new_email, current_password, request)
 
 
 @router.get("/api/v1/employees/confirm-rebind-email")
 async def confirm_rebind_email(
-    token: TokenSchema,
+    token: str,
     uow: UnitOfWork = Depends(get_uow),
     confirm_rebind_email_service: employee_services.ConfirmRebindEmailService = Depends(
         employee_services.ConfirmRebindEmailService

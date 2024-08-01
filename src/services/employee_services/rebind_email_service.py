@@ -10,11 +10,8 @@ from src.schemas.employee_schemas import RebindEmailResponse
 
 class RebindEmailService:
     @staticmethod
-    async def rebind_email(uow, request_data, request):
+    async def rebind_email(uow, new_email, current_password, request):
         try:
-            new_email = request_data.new_email
-            current_password = request_data.current_password
-
             user_id = request.state.user.id
 
             async with uow:

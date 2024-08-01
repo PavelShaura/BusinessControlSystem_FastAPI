@@ -8,7 +8,7 @@ from src.schemas.employee_schemas import EmployeeMessageResponse
 
 class ConfirmRebindEmailService:
     @staticmethod
-    async def confirm_rebind_email(uow, token):
+    async def confirm_rebind_email(uow, token: str):
         try:
             payload = jwt.decode(
                 token,

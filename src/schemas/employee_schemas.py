@@ -80,4 +80,3 @@ class UpdateEmployeeDataRequest(BaseModel):
         None, description="New position ID of the employee"
     )
     current_password: str = Field(..., description="Current password of the employee")
-
