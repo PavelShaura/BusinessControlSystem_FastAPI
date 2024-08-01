@@ -13,22 +13,37 @@ router = APIRouter(tags=["positions"])
 
 @router.post("/api/v1/positions", response_model=PositionResponse)
 async def create_position(
-    position_data: PositionCreate, uow: UnitOfWork = Depends(get_uow)
+    position_data: PositionCreate,
+    uow: UnitOfWork = Depends(get_uow),
+    create_position_service: position_services.CreatePositionService = Depends(
+        position_services.CreatePositionService
+    ),
 ):
-    return await position_services.CreatePositionService()(
-        uow, **position_data.model_dump()
+    return await create_position_service.create_position(
+        uow, position_data.name, position_data.company_id
     )
 
 
 @router.put("/api/v1/positions/{position_id}", response_model=PositionResponse)
 async def update_position(
-    position_id: int, position_data: PositionUpdate, uow: UnitOfWork = Depends(get_uow)
+    position_id: int,
+    position_data: PositionUpdate,
+    uow: UnitOfWork = Depends(get_uow),
+    update_position_service: position_services.UpdatePositionService = Depends(
+        position_services.UpdatePositionService
+    ),
 ):
-    return await position_services.UpdatePositionService()(
-        uow, position_id, **position_data.dict(exclude_unset=True)
+    return await update_position_service.update_position(
+        uow, position_id, position_data.name, position_data.company_id
     )
 
 
 @router.delete("/api/v1/positions/{position_id}")
-async def delete_position(position_id: int, uow: UnitOfWork = Depends(get_uow)):
-    return await position_services.DeletePositionService()(uow, position_id)
+async def delete_position(
+    position_id: int,
+    uow: UnitOfWork = Depends(get_uow),
+    delete_position_service: position_services.DeletePositionService = Depends(
+        position_services.DeletePositionService
+    ),
+):
+    return await delete_position_service.delete_position(uow, position_id)

@@ -91,7 +91,9 @@ async def rebind_email(
         employee_services.RebindEmailService
     ),
 ):
-    return await rebind_email_service.rebind_email(uow, new_email, current_password, request)
+    return await rebind_email_service.rebind_email(
+        uow, new_email, current_password, request
+    )
 
 
 @router.get("/api/v1/employees/confirm-rebind-email")
