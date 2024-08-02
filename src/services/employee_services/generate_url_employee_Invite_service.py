@@ -1,15 +1,17 @@
 import jwt
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 
-from src.api.v1.company.utils.email_utils import send_initial_invite_email
+from src.utils.mail_utils.send_email_service import EmailService
 from src.core.config import settings
 from src.schemas.employee_schemas import GenerateURLEmployeeInviteResponse
 
 
 class GenerateURLEmployeeInviteService:
     @staticmethod
-    async def generate_url_employee_invite(uow, employee_id, request):
+    async def generate_url_employee_invite(
+        uow, employee_id, request, email_service: EmailService = Depends(EmailService)
+    ):
         try:
             async with uow:
                 employee = await uow.user_repository.get_by_id(employee_id)
@@ -28,7 +30,9 @@ class GenerateURLEmployeeInviteService:
 
                 invite_url = f"{request.base_url}api/v1/employees/registration-complete?token={invite_token}"
 
-                await send_initial_invite_email(employee.email, invite_url)
+                await email_service.send_initial_invite_email(
+                    employee.email, invite_url
+                )
 
                 return GenerateURLEmployeeInviteResponse(
                     message="Invite sent successfully", invite_url=invite_url
