@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from src.api.v1.company.utils.invite_utils import verify_invite_token
+from src.utils.mail_utils.invite_mail_token_utils import verify_invite_token
 from src.schemas.company_schemas import MessageResponse
 
 

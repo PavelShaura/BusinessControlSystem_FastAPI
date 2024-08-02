@@ -1,16 +1,22 @@
 import jwt
 
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 
 from src.api.v1.auth.utils.password_utils import validate_password
-from src.api.v1.company.utils.email_utils import send_rebind_email
+from src.utils.mail_utils.send_email_service import EmailService
 from src.core.config import settings
 from src.schemas.employee_schemas import RebindEmailResponse
 
 
 class RebindEmailService:
     @staticmethod
-    async def rebind_email(uow, new_email, current_password, request):
+    async def rebind_email(
+        uow,
+        new_email,
+        current_password,
+        request,
+        email_service: EmailService = Depends(EmailService),
+    ):
         try:
             user_id = request.state.user.id
 
@@ -38,7 +44,7 @@ class RebindEmailService:
 
                 rebind_url = f"{request.base_url}api/v1/employees/confirm-rebind-email?token={rebind_token}"
 
-                await send_rebind_email(new_email, rebind_url)
+                await email_service.send_rebind_email(new_email, rebind_url)
 
                 return RebindEmailResponse(
                     message="Rebind email sent successfully", rebind_url=rebind_url
