@@ -11,7 +11,9 @@ class UpdatePositionService:
                 position = await uow.position_repository.get_by_id(position_id)
                 if not position:
                     raise ValueError("Position not found")
-                await uow.position_repository.update(position_id, name=name, company_id=company_id)
+                await uow.position_repository.update(
+                    position_id, name=name, company_id=company_id
+                )
                 await uow.commit()
                 updated_position = await uow.position_repository.get_by_id(position_id)
             return PositionResponse.model_validate(updated_position)

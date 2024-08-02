@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy import select, update
 
 from src.utils.repository import SqlAlchemyRepository
@@ -11,6 +13,11 @@ class UserRepository(SqlAlchemyRepository):
         query = select(self.model).where(self.model.id == user_id)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
+
+    async def get_by_ids(self, user_ids: List[int]):
+        query = select(self.model).where(self.model.id.in_(user_ids))
+        result = await self.session.execute(query)
+        return result.scalars().all()
 
     async def get_by_username(self, username: str):
         return await self.get_by_query_one_or_none(username=username)

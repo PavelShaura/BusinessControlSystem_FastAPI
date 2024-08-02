@@ -76,17 +76,14 @@ class SqlAlchemyRepository(AbstractRepository):
         res: Result = await self.session.execute(query)
         return res.scalars().all()
 
-    async def update_one_by_id(
-        self, _id: Union[int, str, uuid4], values: dict
-    ) -> type(model) | None:
-        query = (
-            update(self.model)
-            .filter(self.model.id == _id)
-            .values(**values)
-            .returning(self.model)
-        )
-        _obj: Result | None = await self.session.execute(query)
-        return _obj.scalar_one_or_none()
+    async def update_one_by_id(self, id: int, **kwargs):
+        obj = await self.session.get(self.model, id)
+        if obj:
+            for key, value in kwargs.items():
+                setattr(obj, key, value)
+            await self.session.commit()
+            await self.session.refresh(obj)
+        return obj
 
     async def delete_by_query(self, **kwargs) -> None:
         query = delete(self.model).filter_by(**kwargs)
