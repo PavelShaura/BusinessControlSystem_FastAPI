@@ -9,7 +9,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from src.models.base_model import BaseModel
-
 from enum import Enum
 
 
@@ -31,11 +30,11 @@ class Task(BaseModel):
     status = Column(SQLEnum(TaskStatus), default=TaskStatus.TODO)
     estimated_time = Column(Integer)  # в минутах
 
-    author = relationship("User", foreign_keys=[author_id])
-    responsible = relationship("User", foreign_keys=[responsible_id])
+    author = relationship("User", foreign_keys=[author_id], overlaps="watchers,executors")
+    responsible = relationship("User", foreign_keys=[responsible_id], overlaps="watchers,executors")
 
-    watchers = relationship("User", secondary="task_watchers", lazy="selectin")
-    executors = relationship("User", secondary="task_executors", lazy="selectin")
+    watchers = relationship("User", secondary="task_watchers", lazy="selectin", overlaps="task_watchers,task_executors")
+    executors = relationship("User", secondary="task_executors", lazy="selectin", overlaps="task_watchers,task_executors")
 
 
 class TaskWatcher(BaseModel):
@@ -44,8 +43,8 @@ class TaskWatcher(BaseModel):
     task_id = Column(Integer, ForeignKey("tasks.id"), primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
 
-    task = relationship("Task", backref="task_watchers")
-    user = relationship("User")
+    task = relationship("Task", backref="task_watchers", overlaps="watchers,task_watchers")
+    user = relationship("User", overlaps="watchers,task_watchers")
 
 
 class TaskExecutor(BaseModel):
@@ -54,5 +53,5 @@ class TaskExecutor(BaseModel):
     task_id = Column(Integer, ForeignKey("tasks.id"), primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
 
-    task = relationship("Task", backref="task_executors")
-    user = relationship("User")
+    task = relationship("Task", backref="task_executors", overlaps="executors,task_executors")
+    user = relationship("User", overlaps="executors,task_executors")
