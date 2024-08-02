@@ -12,7 +12,6 @@ class UserUpdate(BaseModel):
 
 class UserResponse(BaseModel):
     id: int
-    username: str
     email: str
     first_name: Optional[str]
     last_name: Optional[str]

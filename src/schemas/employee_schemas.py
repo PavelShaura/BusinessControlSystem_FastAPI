@@ -64,10 +64,6 @@ class GenerateURLEmployeeInviteResponse(BaseModel):
 class RebindEmailRequest(BaseModel):
     new_email: EmailStr
     current_password: str
-    request: Request
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class RebindEmailResponse(BaseModel):
@@ -84,7 +80,3 @@ class UpdateEmployeeDataRequest(BaseModel):
         None, description="New position ID of the employee"
     )
     current_password: str = Field(..., description="Current password of the employee")
-    request: Request
-
-    class Config:
-        arbitrary_types_allowed = True

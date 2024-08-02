@@ -15,6 +15,9 @@ class UserInfo(BaseModel):
     id: int
     email: str
 
+    class Config:
+        from_attributes = True
+
 
 class TaskCreate(BaseModel):
     title: str
@@ -24,6 +27,9 @@ class TaskCreate(BaseModel):
     executors: List[int] = Field(default_factory=list)
     deadline: Optional[datetime] = None
     estimated_time: Optional[int] = None
+
+    class Config:
+        from_attributes = True
 
 
 class TaskUpdate(BaseModel):
@@ -36,18 +42,22 @@ class TaskUpdate(BaseModel):
     status: Optional[TaskStatus] = None
     estimated_time: Optional[int] = None
 
+    class Config:
+        from_attributes = True
+
 
 class TaskResponse(BaseModel):
     id: int
     title: str
-    description: Optional[str]
+    description: str
     author: UserInfo
     responsible: Optional[UserInfo]
     watchers: List[UserInfo]
     executors: List[UserInfo]
-    deadline: Optional[datetime]
-    status: TaskStatus
-    estimated_time: Optional[int]
+    deadline: datetime
+    status: str
+    estimated_time: int
+    warning: Optional[str] = None
 
     class Config:
         from_attributes = True

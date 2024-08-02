@@ -5,19 +5,13 @@ from fastapi import HTTPException
 from src.api.v1.auth.utils.password_utils import validate_password
 from src.api.v1.company.utils.email_utils import send_rebind_email
 from src.core.config import settings
-from src.services.base_service import BaseService
-from src.schemas.employee_schemas import RebindEmailRequest, RebindEmailResponse
+from src.schemas.employee_schemas import RebindEmailResponse
 
 
-class RebindEmailService(BaseService):
-    try:
-
-        async def execute(self, uow, **kwargs):
-            request_data = RebindEmailRequest(**kwargs)
-            new_email = request_data.new_email
-            current_password = request_data.current_password
-            request = request_data.request
-
+class RebindEmailService:
+    @staticmethod
+    async def rebind_email(uow, new_email, current_password, request):
+        try:
             user_id = request.state.user.id
 
             async with uow:
@@ -49,6 +43,5 @@ class RebindEmailService(BaseService):
                 return RebindEmailResponse(
                     message="Rebind email sent successfully", rebind_url=rebind_url
                 ).model_dump()
-
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))

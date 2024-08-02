@@ -1,11 +1,18 @@
 from datetime import datetime
 
+from sqlalchemy import select
+
 from src.utils.repository import SqlAlchemyRepository
 from src.models.task_models import Task, TaskWatcher, TaskExecutor
 
 
 class TaskRepository(SqlAlchemyRepository):
     model = Task
+
+    async def get_by_id(self, task_id: int):
+        query = select(self.model).where(self.model.id == task_id)
+        result = await self.session.execute(query)
+        return result.scalar_one_or_none()
 
     async def create(self, **kwargs):
         if "deadline" in kwargs:
@@ -26,6 +33,11 @@ class TaskRepository(SqlAlchemyRepository):
         return task
 
     async def update(self, task_id: int, **kwargs):
+        if "deadline" in kwargs:
+            deadline = kwargs["deadline"]
+            if deadline and isinstance(deadline, datetime) and deadline.tzinfo:
+                kwargs["deadline"] = deadline.replace(tzinfo=None)
+
         watchers = kwargs.pop("watchers", None)
         executors = kwargs.pop("executors", None)
 
@@ -35,15 +47,15 @@ class TaskRepository(SqlAlchemyRepository):
             await self.session.execute(
                 TaskWatcher.__table__.delete().where(TaskWatcher.task_id == task_id)
             )
-            for watcher in watchers:
-                self.session.add(TaskWatcher(task_id=task_id, user_id=watcher.id))
+            for watcher_id in watchers:
+                self.session.add(TaskWatcher(task_id=task_id, user_id=watcher_id))
 
         if executors is not None:
             await self.session.execute(
                 TaskExecutor.__table__.delete().where(TaskExecutor.task_id == task_id)
             )
-            for executor in executors:
-                self.session.add(TaskExecutor(task_id=task_id, user_id=executor.id))
+            for executor_id in executors:
+                self.session.add(TaskExecutor(task_id=task_id, user_id=executor_id))
 
         await self.session.flush()
         return task

@@ -1,15 +1,20 @@
-from src.services.base_service import BaseService
-from src.schemas.position_schemas import PositionCreate, PositionResponse
+from fastapi import HTTPException
+
+from src.schemas.position_schemas import PositionResponse
 
 
-class CreatePositionService(BaseService):
-    async def execute(self, uow, **kwargs):
-        position_data = PositionCreate(**kwargs)
+class CreatePositionService:
+    try:
 
-        async with uow:
-            new_position = await uow.position_repository.create(
-                name=position_data.name, company_id=position_data.company_id
-            )
-            await uow.commit()
+        @staticmethod
+        async def create_position(uow, name, company_id):
+            async with uow:
+                new_position = await uow.position_repository.create(
+                    name=name, company_id=company_id
+                )
+                await uow.commit()
 
-        return PositionResponse.model_validate(new_position)
+            return PositionResponse.model_validate(new_position)
+
+    except ValueError as e:
+        raise HTTPException(400, detail=f"Failed to create position: {str(e)}")

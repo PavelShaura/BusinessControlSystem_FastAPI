@@ -8,7 +8,6 @@ from sqlalchemy import (
     Enum as SQLEnum,
 )
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.associationproxy import association_proxy
 from src.models.base_model import BaseModel
 
 from enum import Enum
@@ -35,8 +34,8 @@ class Task(BaseModel):
     author = relationship("User", foreign_keys=[author_id])
     responsible = relationship("User", foreign_keys=[responsible_id])
 
-    watchers = association_proxy("task_watchers", "user")
-    executors = association_proxy("task_executors", "user")
+    watchers = relationship("User", secondary="task_watchers", lazy="selectin")
+    executors = relationship("User", secondary="task_executors", lazy="selectin")
 
 
 class TaskWatcher(BaseModel):

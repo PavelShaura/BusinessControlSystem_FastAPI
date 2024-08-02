@@ -5,16 +5,12 @@ from fastapi import HTTPException
 from src.api.v1.company.utils.email_utils import send_initial_invite_email
 from src.core.config import settings
 from src.schemas.employee_schemas import GenerateURLEmployeeInviteResponse
-from src.services.base_service import BaseService
 
 
-class GenerateURLEmployeeInviteService(BaseService):
-    try:
-
-        async def execute(self, uow, **kwargs):
-            employee_id = kwargs.get("employee_id")
-            request = kwargs.get("request")
-
+class GenerateURLEmployeeInviteService:
+    @staticmethod
+    async def generate_url_employee_invite(uow, employee_id, request):
+        try:
             async with uow:
                 employee = await uow.user_repository.get_by_id(employee_id)
                 if not employee:
@@ -37,6 +33,5 @@ class GenerateURLEmployeeInviteService(BaseService):
                 return GenerateURLEmployeeInviteResponse(
                     message="Invite sent successfully", invite_url=invite_url
                 ).model_dump()
-
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
