@@ -36,8 +36,12 @@ class DepartmentCreate(BaseModel):
         from_attributes = True
 
 
-class DepartmentUpdate(DepartmentBase):
-    pass
+class DepartmentUpdate(BaseModel):
+    name: Optional[str] = None
+    parent: Optional[int] = None
+
+    class Config:
+        from_attributes = True
 
 
 class DepartmentResponse(BaseModel):

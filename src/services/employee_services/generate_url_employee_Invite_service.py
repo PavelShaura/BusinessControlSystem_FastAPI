@@ -9,9 +9,7 @@ from src.schemas.employee_schemas import GenerateURLEmployeeInviteResponse
 
 class GenerateURLEmployeeInviteService:
     @staticmethod
-    async def generate_url_employee_invite(
-        uow, employee_id, request
-    ):
+    async def generate_url_employee_invite(uow, employee_id, request):
         try:
             async with uow:
                 employee = await uow.user_repository.get_by_id(employee_id)
