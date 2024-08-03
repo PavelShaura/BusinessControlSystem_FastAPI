@@ -1,5 +1,6 @@
 from fastapi import BackgroundTasks, HTTPException
 
+from src.utils.logging_logic import logger
 from src.utils.mail_utils.send_email_service import EmailService
 from src.utils.mail_utils.invite_mail_token_utils import (
     generate_invite_token,
@@ -15,6 +16,7 @@ class SignUpService:
             async with uow:
                 existing_user = await uow.user_repository.get_by_email(email)
                 if existing_user:
+                    logger.info(f"Email {email} already registered")
                     raise ValueError("Email already registered")
 
                 invite_token = generate_invite_token()

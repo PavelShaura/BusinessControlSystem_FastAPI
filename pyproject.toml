@@ -20,6 +20,7 @@ redis = "^5.0.7"
 fastapi-mail = "^1.4.1"
 ruff = "^0.5.2"
 sqlalchemy-utils = "^0.41.2"
+betterlogging = "^1.0.0"
 
 
 [build-system]

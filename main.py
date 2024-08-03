@@ -13,13 +13,15 @@ from src.api.v1.department.router import router as department_router
 from src.api.v1.position.router import router as position_router
 from src.api.v1.user.router import router as user_router
 from src.api.v1.task.router import router as task_router
+from src.utils.logging_logic import register_logger, logger
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("App is starting up...")
+    register_logger()
+    logger.info("App is starting up...")
     yield
-    print("App is shutting down...")
+    logger.error("App is shutting down...")
 
 
 app = FastAPI(lifespan=lifespan, title="BCS_APP")

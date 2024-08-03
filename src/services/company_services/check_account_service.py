@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 
 from src.schemas.company_schemas import MessageResponse
+from src.utils.logging_logic import logger
 
 
 class CheckAccountService:
@@ -10,6 +11,7 @@ class CheckAccountService:
             async with uow:
                 user = await uow.user_repository.get_by_email(email)
                 if user:
+                    logger.info(f"Email {email} already registered")
                     raise ValueError("Email already registered")
                 return MessageResponse(message="Email is available")
         except ValueError as e:
