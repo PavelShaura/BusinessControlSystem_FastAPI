@@ -1,4 +1,6 @@
 # docker run --name my_postgres_container -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=postgres -p 5432:5432 -d postgres
+# sudo docker exec -it my_postgres_container psql -U postgres -c "CREATE EXTENSION ltree;"
+# sudo docker run --name my_redis -p 6379:6379 -d redis
 # alembic revision --autogenerate -m 'initial'
 # alembic upgrade head
 #

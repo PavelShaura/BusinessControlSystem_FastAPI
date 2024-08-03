@@ -10,7 +10,7 @@ from src.schemas.employee_schemas import GenerateURLEmployeeInviteResponse
 class GenerateURLEmployeeInviteService:
     @staticmethod
     async def generate_url_employee_invite(
-        uow, employee_id, request, email_service: EmailService = Depends(EmailService)
+        uow, employee_id, request
     ):
         try:
             async with uow:
@@ -29,7 +29,7 @@ class GenerateURLEmployeeInviteService:
                 )
 
                 invite_url = f"{request.base_url}api/v1/employees/registration-complete?token={invite_token}"
-
+                email_service = EmailService()
                 await email_service.send_initial_invite_email(
                     employee.email, invite_url
                 )

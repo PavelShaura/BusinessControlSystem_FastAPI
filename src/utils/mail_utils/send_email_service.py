@@ -62,3 +62,7 @@ class EmailService:
         </html>
         """
         await self.send_email("BusinessControlSystem_app - Invitation", email, html)
+
+
+def get_email_service():
+    return EmailService()

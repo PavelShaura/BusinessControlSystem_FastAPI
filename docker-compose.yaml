@@ -29,8 +29,8 @@ services:
       - .env
     container_name: bcs_app
     command: ["/app/docker/app.sh"]
+    ports:
+      - "8000:8000"
     depends_on:
       - pg
       - redis
-    ports:
-      - "8000:8000"

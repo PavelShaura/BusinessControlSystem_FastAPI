@@ -54,7 +54,7 @@ class Settings(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file="/home/pavel/PycharmProjects/BusinessControlSystem_FastAPI /.env"
+        env_file="/home/pavel/BCS_FastAPI/pythonProject/BusinessControlSystem_FastAPI/.env"
     )
 
 

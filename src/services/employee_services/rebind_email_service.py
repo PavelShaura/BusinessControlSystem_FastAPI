@@ -14,8 +14,7 @@ class RebindEmailService:
         uow,
         new_email,
         current_password,
-        request,
-        email_service: EmailService = Depends(EmailService),
+        request
     ):
         try:
             user_id = request.state.user.id
@@ -43,7 +42,7 @@ class RebindEmailService:
                 )
 
                 rebind_url = f"{request.base_url}api/v1/employees/confirm-rebind-email?token={rebind_token}"
-
+                email_service = EmailService()
                 await email_service.send_rebind_email(new_email, rebind_url)
 
                 return RebindEmailResponse(
