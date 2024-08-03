@@ -1,26 +1,21 @@
 from fastapi import HTTPException
 
-from src.schemas.department_schemas import DepartmentResponse
+from src.schemas.department_schemas import DepartmentResponse, DepartmentUpdate
 
 
 class UpdateDepartmentService:
     @staticmethod
-    async def update_department(uow, department_id: int, department_data):
+    async def update_department(
+        uow, department_id: int, department_data: DepartmentUpdate
+    ):
         try:
             async with uow:
-                department = await uow.department_repository.get_by_id(department_id)
-                if not department:
-                    raise ValueError("Department not found")
-
-                await uow.department_repository.update(
-                    department_id, **department_data.model_dump(exclude_unset=True)
+                updated_department = await uow.department_repository.update(
+                    department_id,
+                    name=department_data.name,
+                    parent_id=department_data.parent,
                 )
                 await uow.commit()
-
-                updated_department = await uow.department_repository.get_by_id(
-                    department_id
-                )
-
-            return DepartmentResponse.model_validate(updated_department)
+                return DepartmentResponse.model_validate(updated_department)
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
