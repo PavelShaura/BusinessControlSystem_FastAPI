@@ -3,6 +3,7 @@ from sqlalchemy.sql import func
 from sqlalchemy_utils import Ltree
 
 from src.models.department_models import Department
+from src.utils.logging_logic import logger
 from src.utils.repository import SqlAlchemyRepository
 
 
@@ -89,12 +90,15 @@ class DepartmentRepository(SqlAlchemyRepository):
         if new_parent_id is not None:
             new_parent = await self.get_by_id(new_parent_id)
             if not new_parent:
+                logger.info(f"New parent {new_parent} not found")
                 raise ValueError("New parent department not found")
 
             if new_parent.company_id != department.company_id:
+                logger.info(
+                    f"New parent {new_parent} must be in the company {department.company_id}"
+                )
                 raise ValueError("New parent must be in the same company")
 
-            # Вычисляем новый путь
             new_path = Ltree(f"{new_parent.path}.{department_id}")
 
             # Обновляем пути для всех потомков
@@ -126,7 +130,6 @@ class DepartmentRepository(SqlAlchemyRepository):
 
             await self.session.execute(update_query)
         elif new_name:
-            # Если меняется только имя, без изменения родителя
             update_query = (
                 update(self.model)
                 .where(self.model.id == department_id)

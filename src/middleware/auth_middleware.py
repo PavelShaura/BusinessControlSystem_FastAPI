@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 
 from src.api.v1.auth.utils.jwt_utils import decode_jwt
 from src.api.v1.user.repository import UserRepository
+from src.utils.logging_logic import logger
 from src.utils.unit_of_work import get_uow
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/sign-in")
@@ -36,6 +37,7 @@ async def auth_middleware(request: Request, call_next):
         company_id = payload.get("company_id")
 
         if not all([user_id, email, company_id]):
+            logger.info("Invalid token payload")
             raise HTTPException(status_code=401, detail="Invalid token payload")
 
         async for uow in get_uow():
@@ -43,12 +45,15 @@ async def auth_middleware(request: Request, call_next):
             user = await user_repo.get_by_id(int(user_id))
 
             if not user or user.email != email or str(user.company_id) != company_id:
+                logger.info(f"User {user} not found or invalid token data")
                 raise HTTPException(
                     status_code=401, detail="User not found or invalid token data"
                 )
 
             if not user.is_active:
+                logger.info(f"User {user} inactive")
                 raise HTTPException(status_code=403, detail="User inactive")
+
             request.state.user_id = user_id
             request.state.user = user
             request.state.is_admin = is_admin
@@ -56,6 +61,7 @@ async def auth_middleware(request: Request, call_next):
             break
 
     except HTTPException as http_exc:
+        logger.info(f"{http_exc}")
         return JSONResponse(
             status_code=http_exc.status_code, content={"detail": http_exc.detail}
         )
