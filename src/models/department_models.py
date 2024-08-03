@@ -27,6 +27,8 @@ class Department(BaseModel):
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
     manager_id = Column(Integer, ForeignKey("users.id"), nullable=True)
 
+    parent_id = Column(Integer, ForeignKey("departments.id"), nullable=True)
+
     company = relationship("Company", back_populates="departments")
     manager = relationship("User", foreign_keys=[manager_id])
     employees = relationship(

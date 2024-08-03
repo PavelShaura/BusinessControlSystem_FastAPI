@@ -1,4 +1,4 @@
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, text
 from sqlalchemy.sql import func
 from sqlalchemy_utils import Ltree
 
@@ -12,22 +12,18 @@ class DepartmentRepository(SqlAlchemyRepository):
     async def create(self, **kwargs):
         parent_id = kwargs.pop("parent_id", None)
         company_id = kwargs["company_id"]
-
         if parent_id:
             parent = await self.get_by_id(parent_id)
             if not parent or parent.company_id != company_id:
                 raise ValueError("Invalid parent department")
-
             result = await self.session.execute(select(func.max(Department.id)))
             new_id = (result.scalar() or 0) + 1
-
-            new_path = Ltree(f"{parent.path.path}.{new_id}")
+            new_path = Ltree(f"{parent.path}.{new_id}")
         else:
             result = await self.session.execute(select(func.max(Department.id)))
             new_id = (result.scalar() or 0) + 1
             new_path = Ltree(str(new_id))
-
-        new_department = Department(id=new_id, path=new_path, **kwargs)
+        new_department = Department(id=new_id, path=new_path, parent_id=parent_id, **kwargs)
         self.session.add(new_department)
         await self.session.flush()
         return new_department
@@ -42,19 +38,39 @@ class DepartmentRepository(SqlAlchemyRepository):
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def update(self, department_id: int, **kwargs):
-        query = (
-            update(self.model).where(self.model.id == department_id).values(**kwargs)
-        )
-        await self.session.execute(query)
-
     async def delete(self, department_id: int):
         department = await self.get_by_id(department_id)
         if department:
-            query = delete(self.model).where(
-                self.model.path.descendant_of(department.path)
-            )
-            await self.session.execute(query)
+            delete_path = department.path
+            parent_path = str(delete_path).rsplit('.', 1)[0]
+
+            child_update_query = text("""
+                UPDATE departments
+                SET path = :parent_path || subpath(path, nlevel(:delete_path))
+                WHERE path <@ :delete_path AND id != :department_id
+            """)
+            await self.session.execute(child_update_query, {
+                'parent_path': parent_path,
+                'delete_path': str(delete_path),
+                'department_id': department_id
+            })
+
+            update_parent_query = text("""
+                UPDATE departments
+                SET parent_id = :new_parent_id
+                WHERE parent_id = :old_parent_id
+            """)
+            await self.session.execute(update_parent_query, {
+                'new_parent_id': department.parent_id,
+                'old_parent_id': department_id
+            })
+
+            delete_query = delete(self.model).where(self.model.id == department_id)
+            await self.session.execute(delete_query)
+            await self.session.commit()
+
+    async def update(self, department_id: int, **kwargs):
+        pass
 
     async def get_children(self, department_id: int):
         parent = await self.get_by_id(department_id)
@@ -71,3 +87,4 @@ class DepartmentRepository(SqlAlchemyRepository):
             .values(manager_id=manager_id)
         )
         await self.session.execute(query)
+

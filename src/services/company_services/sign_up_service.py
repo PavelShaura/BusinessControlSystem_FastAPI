@@ -1,6 +1,6 @@
 from fastapi import BackgroundTasks, HTTPException, Depends
 
-from src.utils.mail_utils.send_email_service import EmailService
+from src.utils.mail_utils.send_email_service import EmailService, get_email_service
 from src.utils.mail_utils.invite_mail_token_utils import (
     generate_invite_token,
     save_invite_token,
@@ -13,8 +13,7 @@ class SignUpService:
     async def sign_up(
         uow,
         background_tasks: BackgroundTasks,
-        email,
-        email_service: EmailService = Depends(EmailService),
+        email
     ):
         try:
             async with uow:
@@ -24,7 +23,7 @@ class SignUpService:
 
                 invite_token = generate_invite_token()
                 save_invite_token(email, invite_token)
-
+                email_service = EmailService()
                 background_tasks.add_task(
                     email_service.send_invite_email, email, invite_token
                 )
@@ -34,3 +33,4 @@ class SignUpService:
                 ).model_dump()
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
+
