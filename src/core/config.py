@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     MAIL_SERVER: str
     MAIL_FROM_NAME: str
 
+    RABBITMQ_HOST: str
+    RABBITMQ_USER: str
+    RABBITMQ_PASS: str
+
     @property
     def database_url(self):
         return (
@@ -54,7 +58,7 @@ class Settings(BaseSettings):
         )
 
     model_config = SettingsConfigDict(
-        env_file="/home/pavel/BCS_FastAPI/pythonProject/BusinessControlSystem_FastAPI/.env"
+        env_file="/home/pavel/PycharmProjects/BusinessControlSystem_FastAPI /.env"
     )
 
 

@@ -21,6 +21,8 @@ fastapi-mail = "^1.4.1"
 ruff = "^0.5.2"
 sqlalchemy-utils = "^0.41.2"
 betterlogging = "^1.0.0"
+aio-pika = {extras = ["redis"], version = "^9.4.2"}
+celery = {extras = ["redis"], version = "^5.4.0"}
 
 
 [build-system]
