@@ -16,13 +16,12 @@ router = APIRouter(tags=["sign-up"])
 @router.post("/api/v1/auth/sign-up")
 async def sign_up(
     sign_up_data: SignUpRequest,
-    background_tasks: BackgroundTasks,
     uow: UnitOfWork = Depends(get_uow),
     sign_up_service: company_services.SignUpService = Depends(
         company_services.SignUpService
     ),
 ):
-    return await sign_up_service.sign_up(uow, background_tasks, sign_up_data.email)
+    return await sign_up_service.sign_up(uow, sign_up_data.email)
 
 
 @router.post("/api/v1/auth/sign-up-verify")
