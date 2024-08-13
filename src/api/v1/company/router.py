@@ -44,7 +44,7 @@ async def complete_sign_up(
         company_services.CompleteSignUpService
     ),
 ):
-    return await complete_sign_up_service.comlete_sign_up(uow, user_data)
+    return await complete_sign_up_service.complete_sign_up(uow, user_data)
 
 
 @router.get("/api/v1/check_account/{account}", response_model=MessageResponse)

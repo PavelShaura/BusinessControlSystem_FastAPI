@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     RABBITMQ_USER: str
     RABBITMQ_PASS: str
 
+    RMQ_SEND_MAIL_QUEUE: str
+    RMQ_REBIND_MAIL_QUEUE: str
+    RMQ_INVITE_EMPLOYEE_MAIL_QUEUE: str
+
     @property
     def database_url(self):
         return (

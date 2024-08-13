@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+from src.core.config import settings
 from src.utils.logging_logic import logger
 from src.utils.mail_utils.invite_mail_token_utils import (
     generate_invite_token,
@@ -26,8 +27,9 @@ class SignUpService:
                 rabbitmq_producer = RabbitMQProducer()
                 await rabbitmq_producer.connect()
                 await rabbitmq_producer.publish(
-                    'email_tasks',
-                    {'task': 'send_invite_email', 'args': [email, invite_token]}
+                    queue_name=settings.RMQ_SEND_MAIL_QUEUE,
+                    task_type="send_invite_email",
+                    task_args={"email": email, "invite_token": invite_token},
                 )
                 await rabbitmq_producer.close()
 
