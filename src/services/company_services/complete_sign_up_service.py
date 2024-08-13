@@ -10,12 +10,16 @@ class CompleteSignUpService:
     async def complete_sign_up(uow, user_data):
         try:
             async with uow:
-                existing_user = await uow.user_repository.get_by_email(user_data.account)
+                existing_user = await uow.user_repository.get_by_email(
+                    user_data.account
+                )
                 if existing_user:
                     logger.info(f"User {existing_user} already exists")
                     raise ValueError("User already exists")
 
-                company = await uow.company_repository.get_by_name(user_data.company_name)
+                company = await uow.company_repository.get_by_name(
+                    user_data.company_name
+                )
                 if not company:
                     company = await uow.company_repository.create(
                         name=user_data.company_name

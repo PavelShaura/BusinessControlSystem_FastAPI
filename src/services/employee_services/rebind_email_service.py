@@ -6,6 +6,7 @@ from src.api.v1.auth.utils.password_utils import validate_password
 from src.utils.mail_utils.send_email_service import EmailService
 from src.core.config import settings
 from src.schemas.employee_schemas import RebindEmailResponse
+from src.utils.rabbitmq_utils.rabbitmq_producer import RabbitMQProducer
 
 
 class RebindEmailService:
@@ -37,9 +38,14 @@ class RebindEmailService:
                 )
 
                 rebind_url = f"{request.base_url}api/v1/employees/confirm-rebind-email?token={rebind_token}"
-                email_service = EmailService()
-                await email_service.send_rebind_email(new_email, rebind_url)
-
+                rabbitmq_producer = RabbitMQProducer()
+                await rabbitmq_producer.connect()
+                await rabbitmq_producer.publish(
+                    settings.RMQ_REBIND_MAIL_QUEUE,
+                    "send_rebind_email",
+                    {"email": new_email, "rebind_url": rebind_url},
+                )
+                await rabbitmq_producer.close()
                 return RebindEmailResponse(
                     message="Rebind email sent successfully", rebind_url=rebind_url
                 ).model_dump()

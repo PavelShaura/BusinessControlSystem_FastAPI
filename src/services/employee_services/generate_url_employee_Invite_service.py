@@ -5,6 +5,7 @@ from fastapi import HTTPException, Depends
 from src.utils.mail_utils.send_email_service import EmailService
 from src.core.config import settings
 from src.schemas.employee_schemas import GenerateURLEmployeeInviteResponse
+from src.utils.rabbitmq_utils.rabbitmq_producer import RabbitMQProducer
 
 
 class GenerateURLEmployeeInviteService:
@@ -27,9 +28,14 @@ class GenerateURLEmployeeInviteService:
                 )
 
                 invite_url = f"{request.base_url}api/v1/employees/registration-complete?token={invite_token}"
-                email_service = EmailService()
-                await email_service.send_initial_invite_email(
-                    employee.email, invite_url
+
+                # Используем RabbitMQ для отправки задачи
+                rabbitmq_producer = RabbitMQProducer()
+                await rabbitmq_producer.connect()
+                await rabbitmq_producer.publish(
+                    settings.RMQ_INVITE_EMPLOYEE_MAIL_QUEUE,
+                    "send_employee_invite_email",
+                    {"email": employee.email, "invite_url": invite_url},
                 )
 
                 return GenerateURLEmployeeInviteResponse(
